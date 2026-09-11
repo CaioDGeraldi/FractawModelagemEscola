@@ -75,6 +75,7 @@ Entregar, quando houver exceções não resolvidas, uma grade parcial acompanhad
 - cadastro semestral de disponibilidade dos professores;
 - edição do cadastro de disponibilidade durante o semestre;
 - indicação de prioridade de ausência para períodos específicos;
+- configuração, pela própria empresa, da política de interpretação das prioridades de ausência;
 - geração automática da grade de horários;
 - criação, revisão e remontagem da grade;
 - identificação de conflitos de alocação;
@@ -112,6 +113,11 @@ Responsável por registrar, para cada semestre, a disponibilidade dos professore
 
 O cadastro pode ser alterado durante o semestre e deve permitir atribuir uma prioridade de ausência a períodos específicos.
 
+A prioridade é registrada em uma escala de 1 a 10. O significado operacional dessa escala é definido por uma política configurável da empresa, permitindo que cada escola preserve suas próprias regras internas.
+
+O sistema deve fornecer uma política padrão. Nessa configuração inicial, as prioridades de 1 a 8 são tratadas como restrições negociáveis com peso crescente, enquanto as prioridades 9 e 10 são tratadas como proibições de alocação.
+
+A política padrão não substitui uma política definida pela empresa.
 ### Geração de Horários
 
 Responsável por utilizar os dados acadêmicos e estruturais disponíveis, juntamente com o Cadastro de Disponibilidade, para gerar automaticamente a grade de horários.
@@ -156,25 +162,27 @@ Toda situação não resolvida automaticamente que impeça uma alocação deve p
 
 Após uma negociação ou alteração das condições de disponibilidade, uma nova geração ou remontagem da grade pode ser realizada.
 
+### PRE-007
+
+Cada empresa pode definir como os níveis de prioridade de ausência devem ser interpretados durante a geração.
+
+### PRE-008
+
+Na ausência de uma política própria da empresa, será utilizada uma política padrão em que as prioridades 9 e 10 proíbem a alocação e as prioridades de 1 a 8 permanecem negociáveis, com peso crescente.
+
 ---
 
 ## 8. Questões em aberto
 
-### Q-001 — Prioridade de ausência
-
-Como a escala de 1 a 10 deve ser interpretada?
-
-É necessário definir quais valores representam condições negociáveis e qual valor, ou faixa de valores, representa uma ausência que não pode ser violada.
-
-### Q-002 — Unidade da prioridade
+### Q-001 — Unidade da prioridade
 
 A prioridade é atribuída a um dia inteiro, a um bloco de horário específico ou pode ser utilizada nos dois níveis?
 
-### Q-003 — Alteração durante o semestre
+### Q-002 — Alteração durante o semestre
 
 Quando uma disponibilidade já utilizada em uma grade for alterada, a grade atual deve apenas ser marcada para revisão ou deve existir alguma ação imediata sobre ela?
 
-### Q-004 — Remontagem
+### Q-003 — Remontagem
 
 A remontagem deve tentar preservar o máximo possível da grade anterior ou uma nova geração pode reorganizar livremente todas as alocações?
 
