@@ -75,6 +75,7 @@ Entregar, quando houver exceções não resolvidas, uma grade parcial acompanhad
 - cadastro semestral de disponibilidade dos professores;
 - edição do cadastro de disponibilidade durante o semestre;
 - indicação de prioridade de ausência para períodos específicos;
+- configuração de políticas escolares compartilhadas;
 - configuração, pela própria empresa, da política de interpretação das prioridades de ausência;
 - geração automática da grade de horários;
 - criação, revisão e remontagem da grade;
@@ -105,28 +106,39 @@ Entregar, quando houver exceções não resolvidas, uma grade parcial acompanhad
 
 ## 6. Fronteira do sistema
 
-O domínio de horários escolares é dividido em duas responsabilidades principais.
+O domínio de horários escolares é dividido em três responsabilidades principais: Parâmetros Escolares, Cadastro de Disponibilidade e Geração de Horários.
 
-Cada módulo deve ser capaz de funcionar de forma autônoma. A integração entre módulos ocorre quando ambos estiverem disponíveis, sem transformar um módulo em dependência obrigatória de execução do outro.
+Os módulos funcionais devem permanecer independentes entre si. Eles podem depender de módulos-base do domínio escolar e se integrar quando estiverem disponíveis em conjunto.
+
+### Parâmetros Escolares
+
+Responsável por manter políticas e configurações institucionais compartilhadas pelos módulos do tipo de empresa Escola.
+
+Esse módulo define como a escola opera em aspectos que precisam ser compreendidos por mais de um módulo, como turnos, blocos de horário, políticas de prioridade, limites institucionais e regras gerais de deslocamento.
+
+Parâmetros Escolares não deve armazenar ocorrências operacionais de outros módulos. Disponibilidades individuais pertencem ao Cadastro de Disponibilidade; resultados de geração, conflitos e exceções pertencem à Geração de Horários.
 
 ### Cadastro de Disponibilidade
 
 Responsável por registrar, para cada semestre, a disponibilidade dos professores utilizada no planejamento da grade.
 
-O módulo deve poder ser utilizado de forma independente da Geração de Horários.
+O módulo deve poder ser utilizado de forma independente da Geração de Horários e seus dados devem poder alimentar outros sistemas.
 
 O cadastro pode ser alterado durante o semestre e deve permitir atribuir uma prioridade de ausência a períodos específicos.
 
-A prioridade é registrada em uma escala de 1 a 10. O significado operacional dessa escala é definido por uma política configurável da empresa, permitindo que cada escola preserve suas próprias regras internas.
+A prioridade é registrada em uma escala de 1 a 10. O significado operacional dessa escala é definido pela política vigente da empresa em Parâmetros Escolares.
 
-O sistema deve fornecer uma política padrão. Nessa configuração inicial, as prioridades de 1 a 8 são tratadas como restrições negociáveis com peso crescente, enquanto as prioridades 9 e 10 são tratadas como proibições de alocação.
+Na política padrão, as prioridades de 1 a 8 são tratadas como restrições negociáveis com peso crescente, enquanto as prioridades 9 e 10 são tratadas como proibições de alocação.
 
 A política padrão não substitui uma política definida pela empresa.
+
 ### Geração de Horários
 
-Responsável por utilizar os dados acadêmicos e estruturais disponíveis para gerar automaticamente a grade de horários.
+Responsável por utilizar os dados acadêmicos e estruturais disponíveis, as políticas escolares vigentes e as informações de disponibilidade para gerar automaticamente a grade de horários.
 
-Quando o módulo Cadastro de Disponibilidade estiver disponível, seus dados devem poder ser utilizados diretamente pela Geração de Horários. Na ausência desse módulo, a Geração de Horários deve continuar sendo utilizável a partir de dados de disponibilidade obtidos por outro meio compatível com suas necessidades.
+Quando o Cadastro de Disponibilidade estiver disponível, seus dados devem poder ser utilizados diretamente. Na ausência desse módulo, a Geração de Horários deve continuar sendo utilizável a partir de dados de disponibilidade obtidos por outro meio compatível.
+
+A Geração de Horários aplica as políticas definidas em Parâmetros Escolares, mas não é responsável por definir essas políticas.
 
 Quando uma situação impedir uma alocação e não houver solução automática possível, essa situação deve ser registrada como uma exceção de planejamento. A exceção não deve encerrar a geração da grade: o sistema deve continuar processando as demais alocações possíveis e concluir o processo com os resultados obtidos.
 
@@ -137,6 +149,8 @@ A resolução de situações que dependam de negociação, mudança de disponibi
 ### Catálogo
 
 Os cadastros gerais utilizados pela escola, como professores, turmas, disciplinas, unidades e demais dados compartilhados da empresa, são fornecidos pelo Catálogo.
+
+O Catálogo mantém dados mestres. Ele não define políticas de geração, disponibilidade ou comportamento específico dos módulos escolares.
 
 A modelagem deste repositório considera esses dados como entradas disponíveis e não cobre as regras internas de manutenção do Catálogo.
 
@@ -154,7 +168,7 @@ A disponibilidade dos professores é cadastrada por semestre e pode ser alterada
 
 ### PRE-003
 
-A Geração de Horários utiliza o Cadastro de Disponibilidade vigente como uma de suas fontes obrigatórias de informação.
+A Geração de Horários deve poder consumir disponibilidade proveniente do Cadastro de Disponibilidade ou de outra fonte compatível.
 
 ### PRE-004
 
@@ -178,11 +192,19 @@ Na ausência de uma política própria da empresa, será utilizada uma política
 
 ### PRE-009
 
-Cada módulo do domínio de horários escolares deve permanecer funcional de forma independente.
+Cadastro de Disponibilidade e Geração de Horários devem permanecer funcionais de forma independente entre si.
 
 ### PRE-010
 
-Quando módulos compatíveis estiverem disponíveis em conjunto, eles devem poder compartilhar informações para reduzir duplicação de cadastro e melhorar o fluxo de trabalho, sem criar dependência obrigatória entre eles.
+Parâmetros Escolares é um módulo-base do tipo de empresa Escola e concentra políticas compartilhadas entre os módulos escolares.
+
+### PRE-011
+
+Quando módulos compatíveis estiverem disponíveis em conjunto, eles devem poder compartilhar informações para reduzir duplicação de cadastro e melhorar o fluxo de trabalho.
+
+### PRE-012
+
+O Catálogo é responsável por dados mestres; Parâmetros Escolares é responsável por políticas institucionais; módulos funcionais são responsáveis por seus próprios dados operacionais e processos.
 
 ---
 
@@ -211,6 +233,6 @@ A visão geral pode ser considerada suficientemente definida quando:
 - os objetivos específicos forem coerentes com o problema;
 - o escopo estiver delimitado;
 - os principais itens fora de escopo estiverem explícitos;
-- a fronteira entre Catálogo, Cadastro de Disponibilidade e Geração de Horários estiver clara;
+- a responsabilidade de Catálogo, Parâmetros Escolares, Cadastro de Disponibilidade e Geração de Horários estiver clara;
 - as premissas principais estiverem registradas;
 - as questões que afetam diretamente as regras de geração estiverem identificadas.
