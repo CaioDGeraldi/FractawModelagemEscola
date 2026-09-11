@@ -2,11 +2,7 @@
 
 ## 1. Propósito do documento
 
-Descreva brevemente por que este documento existe e qual aspecto do sistema ele delimita.
-
-> Perguntas de apoio:
-> - O que este documento pretende estabelecer?
-> - Que decisões devem estar claras ao final desta etapa?
+Descrever o problema de planejamento de horários escolares, os objetivos do sistema, seu escopo e os limites considerados nesta modelagem.
 
 ---
 
@@ -76,6 +72,9 @@ Entregar, quando houver exceções não resolvidas, uma grade parcial acompanhad
 - restrições contratuais, legais e institucionais que afetem a alocação;
 - preferências de horário quando forem relevantes para o planejamento;
 - tempo de deslocamento entre unidades;
+- cadastro semestral de disponibilidade dos professores;
+- edição do cadastro de disponibilidade durante o semestre;
+- indicação de prioridade de ausência para períodos específicos;
 - geração automática da grade de horários;
 - criação, revisão e remontagem da grade;
 - identificação de conflitos de alocação;
@@ -98,47 +97,86 @@ Entregar, quando houver exceções não resolvidas, uma grade parcial acompanhad
 - ambiente virtual de aprendizagem;
 - conteúdo e planejamento pedagógico das aulas;
 - comunicação com responsáveis e alunos;
-- gestão completa de recursos humanos.
+- gestão completa de recursos humanos;
+- manutenção dos cadastros gerais compartilhados da empresa, tratados pelo Catálogo.
 
 ---
 
 ## 6. Fronteira do sistema
 
-O sistema é responsável por gerar automaticamente a grade de horários com base nas informações e restrições fornecidas pela instituição.
+O domínio de horários escolares é dividido em duas responsabilidades principais:
+
+### Cadastro de Disponibilidade
+
+Responsável por registrar, para cada semestre, a disponibilidade dos professores utilizada no planejamento da grade.
+
+O cadastro pode ser alterado durante o semestre e deve permitir atribuir uma prioridade de ausência a períodos específicos.
+
+### Geração de Horários
+
+Responsável por utilizar os dados acadêmicos e estruturais disponíveis, juntamente com o Cadastro de Disponibilidade, para gerar automaticamente a grade de horários.
 
 Quando uma situação impedir uma alocação e não houver solução automática possível, essa situação deve ser registrada como uma exceção de planejamento. A exceção não deve encerrar a geração da grade: o sistema deve continuar processando as demais alocações possíveis e concluir o processo com os resultados obtidos.
 
 Ao término da geração, todas as exceções devem ser apresentadas de forma explícita ao responsável pela montagem dos horários, incluindo informações suficientes para compreender qual alocação foi afetada e por que ela não pôde ser concluída.
 
-A resolução de situações que dependam de negociação, mudança de disponibilidade ou decisão externa permanece sob responsabilidade humana. Após essas decisões, a grade pode ser remontada ou gerada novamente com as novas condições.
+A resolução de situações que dependam de negociação, mudança de disponibilidade ou decisão externa permanece sob responsabilidade humana. Após essas decisões, a disponibilidade pode ser alterada e a grade pode ser remontada ou gerada novamente.
 
-Assim, o sistema automatiza a montagem e a validação da grade, mas não substitui decisões humanas quando o problema exige alteração das condições fornecidas.
+### Catálogo
+
+Os cadastros gerais utilizados pela escola, como professores, turmas, disciplinas, unidades e demais dados compartilhados da empresa, são fornecidos pelo Catálogo.
+
+A modelagem deste repositório considera esses dados como entradas disponíveis e não cobre as regras internas de manutenção do Catálogo.
 
 ---
 
 ## 7. Premissas
 
-Registre apenas condições que estejam sendo assumidas como verdadeiras para permitir a modelagem.
-
-Uma premissa não deve ser confundida com requisito ou regra de negócio.
-
 ### PRE-001
 
-[Preencher]
+Os dados gerais necessários para a geração da grade estão previamente disponíveis no Catálogo.
+
+### PRE-002
+
+A disponibilidade dos professores é cadastrada por semestre e pode ser alterada quando necessário.
+
+### PRE-003
+
+A Geração de Horários utiliza o Cadastro de Disponibilidade vigente como uma de suas fontes obrigatórias de informação.
+
+### PRE-004
+
+A geração pode ser concluída mesmo quando uma ou mais alocações não puderem ser resolvidas automaticamente.
+
+### PRE-005
+
+Toda situação não resolvida automaticamente que impeça uma alocação deve permanecer visível para intervenção humana.
+
+### PRE-006
+
+Após uma negociação ou alteração das condições de disponibilidade, uma nova geração ou remontagem da grade pode ser realizada.
 
 ---
 
 ## 8. Questões em aberto
 
-Registre dúvidas cuja resposta ainda possa alterar o escopo ou a compreensão do problema.
+### Q-001 — Prioridade de ausência
 
-### Q-001
+Como a escala de 1 a 10 deve ser interpretada?
 
-[Preencher]
+É necessário definir quais valores representam condições negociáveis e qual valor, ou faixa de valores, representa uma ausência que não pode ser violada.
 
-### Q-002
+### Q-002 — Unidade da prioridade
 
-[Preencher]
+A prioridade é atribuída a um dia inteiro, a um bloco de horário específico ou pode ser utilizada nos dois níveis?
+
+### Q-003 — Alteração durante o semestre
+
+Quando uma disponibilidade já utilizada em uma grade for alterada, a grade atual deve apenas ser marcada para revisão ou deve existir alguma ação imediata sobre ela?
+
+### Q-004 — Remontagem
+
+A remontagem deve tentar preservar o máximo possível da grade anterior ou uma nova geração pode reorganizar livremente todas as alocações?
 
 ---
 
@@ -151,5 +189,6 @@ A visão geral pode ser considerada suficientemente definida quando:
 - os objetivos específicos forem coerentes com o problema;
 - o escopo estiver delimitado;
 - os principais itens fora de escopo estiverem explícitos;
-- a fronteira do sistema puder ser explicada sem ambiguidade;
-- premissas e dúvidas relevantes estiverem registradas.
+- a fronteira entre Catálogo, Cadastro de Disponibilidade e Geração de Horários estiver clara;
+- as premissas principais estiverem registradas;
+- as questões que afetam diretamente as regras de geração estiverem identificadas.
