@@ -2,13 +2,13 @@
 
 ## Objetivo
 
-Este documento registra as fronteiras do FractawModules que devem ser respeitadas durante a modelagem dos requisitos de horário escolar.
+Este documento registra as fronteiras do FractawModules que devem ser respeitadas durante toda a modelagem do Tipo de Empresa Escola.
 
 Ele não define implementação, estrutura de banco de dados, padrões de projeto ou mecanismo de composição em runtime.
 
-## Posição do domínio Escola
+## Posição do Tipo de Empresa Escola
 
-O sistema de horário escolar será incorporado ao FractawModules dentro do contexto do Tipo de Empresa Escola.
+A modelagem deste repositório representa o contexto Escola dentro do FractawModules.
 
 Conceitualmente:
 
@@ -21,17 +21,18 @@ FractawModules
 │
 └── Tipo de Empresa: Escola
     ├── referências estruturais escolares
-    ├── Cadastro de Disponibilidade
-    └── Geração de Horários
+    └── módulos
+        ├── Disponibilidade
+        └── Gestão de Horários
 ```
 
-A localização física definitiva dos conceitos escolares será decidida no repositório do FractawModules. Este repositório deve modelar responsabilidades e ownership de domínio, não diretórios Django.
+A localização física definitiva dos conceitos escolares será decidida no repositório do FractawModules. Este repositório modela responsabilidades e ownership de domínio, não diretórios Django.
 
 ## Tipo de Empresa
 
 `TipoEmpresa` representa o contexto empresarial.
 
-Para esta modelagem, ele responde perguntas como:
+Para esta modelagem, ele determina conceitualmente:
 
 - quais capacidades fazem sentido para uma Escola;
 - quais conceitos pertencem ao domínio escolar;
@@ -43,7 +44,7 @@ Não deve ser tratado como:
 - executor das regras da Escola;
 - service locator;
 - registry universal;
-- objeto que concentra lógica de Catálogo, Parâmetros e módulos.
+- objeto que concentra lógica de referências, Parâmetros e módulos.
 
 O mecanismo concreto de resolução desse contexto em runtime permanece uma decisão do FractawModules.
 
@@ -84,7 +85,7 @@ Responde principalmente:
 Exemplos:
 
 - prioridade mínima bloqueante;
-- política de interpretação da escala 1–10;
+- política de interpretação da escala de prioridade;
 - máximo de aulas consecutivas;
 - tolerância ou margem geral de deslocamento.
 
@@ -107,7 +108,7 @@ Exemplos:
 
 ## Catálogo de Produtos
 
-O Catálogo da plataforma Fractaw não deve ser tratado neste projeto como um catálogo universal.
+O Catálogo da plataforma Fractaw não deve ser tratado neste projeto como catálogo universal.
 
 Ele possui responsabilidade própria relacionada a produtos e embalagens quando aplicável.
 
@@ -117,23 +118,23 @@ Professor, Turma, Disciplina e outras referências escolares não devem ser colo
 
 Parâmetros é uma capacidade-base genérica do FractawModules.
 
-No contexto Escola, ela pode armazenar políticas e configurações empresariais escolares, desde que o conceito seja de fato uma política e não uma referência estrutural ou estado operacional.
+No contexto Escola, ela pode armazenar políticas e configurações empresariais escolares quando o conceito for de fato uma política e não uma referência estrutural ou estado operacional.
 
 A Empresa mantém os valores efetivamente vigentes.
 
 ## Módulos escolares
 
-### Cadastro de Disponibilidade
+### Disponibilidade
 
-É proprietário do processo e do estado operacional relacionado à declaração, revisão e disponibilização da disponibilidade docente.
+É proprietária do processo e do estado operacional relacionado à declaração, revisão e disponibilização da disponibilidade docente.
 
-Deve permanecer utilizável independentemente da Geração de Horários.
+Deve permanecer utilizável independentemente de Gestão de Horários.
 
-### Geração de Horários
+### Gestão de Horários
 
-É proprietária do processo de geração, revisão, exceções e resultados da grade.
+É proprietária do planejamento, geração, revisão, exceções e resultados da grade.
 
-Pode consumir informações de Disponibilidade, referências escolares e Parâmetros, mas não deve assumir ownership dessas informações.
+Pode consumir informações de Disponibilidade, referências escolares e Parâmetros, mas não assume ownership dessas informações.
 
 ## Regra de dependência
 
