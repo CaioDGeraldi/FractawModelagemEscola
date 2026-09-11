@@ -22,7 +22,7 @@ O problema central é construir e manter uma grade de horários válida sem perd
 
 ## 3. Objetivo geral
 
-Apoiar o planejamento da grade de horários escolares, tornando mais simples identificar conflitos, respeitar as restrições da instituição e ajustar a grade quando necessário.
+Gerar automaticamente uma grade de horários escolares que considere as restrições da instituição, identifique situações que não possam ser resolvidas automaticamente e permita revisar e remontar a grade quando necessário.
 
 ---
 
@@ -48,6 +48,18 @@ Facilitar a identificação dos motivos que impedem ou dificultam uma determinad
 
 Permitir que a grade seja revisada e ajustada sem perder a possibilidade de verificar sua consistência.
 
+### OBJ-006
+
+Gerar automaticamente a grade de horários a partir das informações e restrições disponíveis.
+
+### OBJ-007
+
+Registrar e apresentar obrigatoriamente as exceções que impeçam uma alocação durante a geração, sem interromper o processamento das demais alocações possíveis.
+
+### OBJ-008
+
+Entregar, quando houver exceções não resolvidas, uma grade parcial acompanhada das situações que exigem intervenção humana.
+
 ---
 
 ## 5. Escopo
@@ -64,10 +76,14 @@ Permitir que a grade seja revisada e ajustada sem perder a possibilidade de veri
 - restrições contratuais, legais e institucionais que afetem a alocação;
 - preferências de horário quando forem relevantes para o planejamento;
 - tempo de deslocamento entre unidades;
-- criação e ajuste da grade de horários;
+- geração automática da grade de horários;
+- criação, revisão e remontagem da grade;
 - identificação de conflitos de alocação;
+- identificação e registro de exceções não resolvidas automaticamente;
+- continuidade da geração mesmo quando uma exceção impede uma alocação específica;
 - validação da consistência da grade;
-- apresentação dos motivos que impedem ou dificultam uma alocação.
+- apresentação dos motivos que impedem ou dificultam uma alocação;
+- apresentação de uma grade parcial quando existirem alocações que dependam de intervenção humana.
 
 ### 5.2 Fora do escopo
 
@@ -88,19 +104,15 @@ Permitir que a grade seja revisada e ajustada sem perder a possibilidade de veri
 
 ## 6. Fronteira do sistema
 
-Explique onde termina a responsabilidade do sistema.
+O sistema é responsável por gerar automaticamente a grade de horários com base nas informações e restrições fornecidas pela instituição.
 
-Não descreva arquitetura ou integrações técnicas. A fronteira deve ser definida em termos do domínio e das responsabilidades do sistema.
+Quando uma situação impedir uma alocação e não houver solução automática possível, essa situação deve ser registrada como uma exceção de planejamento. A exceção não deve encerrar a geração da grade: o sistema deve continuar processando as demais alocações possíveis e concluir o processo com os resultados obtidos.
 
-> Perguntas de apoio:
-> - O sistema trata apenas planejamento de horários?
-> - Quais processos escolares continuam externos?
-> - O sistema toma decisões ou apenas apoia decisões?
-> - Até onde vai a responsabilidade sobre uma grade?
+Ao término da geração, todas as exceções devem ser apresentadas de forma explícita ao responsável pela montagem dos horários, incluindo informações suficientes para compreender qual alocação foi afetada e por que ela não pôde ser concluída.
 
-### Texto
+A resolução de situações que dependam de negociação, mudança de disponibilidade ou decisão externa permanece sob responsabilidade humana. Após essas decisões, a grade pode ser remontada ou gerada novamente com as novas condições.
 
-[Preencher]
+Assim, o sistema automatiza a montagem e a validação da grade, mas não substitui decisões humanas quando o problema exige alteração das condições fornecidas.
 
 ---
 
