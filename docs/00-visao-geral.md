@@ -106,17 +106,21 @@ Entregar, quando houver exceções não resolvidas, uma grade parcial acompanhad
 
 ## 6. Fronteira do sistema
 
-O domínio de horários escolares é dividido em três responsabilidades principais: Parâmetros Escolares, Cadastro de Disponibilidade e Geração de Horários.
+O domínio de horários escolares utiliza dois módulos funcionais principais, Cadastro de Disponibilidade e Geração de Horários, além dos módulos-base Catálogo e Parâmetros.
 
-Os módulos funcionais devem permanecer independentes entre si. Eles podem depender de módulos-base do domínio escolar e se integrar quando estiverem disponíveis em conjunto.
+Os módulos funcionais devem permanecer independentes entre si. Eles podem consumir informações fornecidas pelos módulos-base e se integrar quando estiverem disponíveis em conjunto.
 
-### Parâmetros Escolares
+### Parâmetros
 
-Responsável por manter políticas e configurações institucionais compartilhadas pelos módulos do tipo de empresa Escola.
+Parâmetros é um módulo-base genérico do Fractaw. Seu conteúdo e seu comportamento são definidos pelo Tipo de Empresa associado à empresa que o utiliza.
 
-Esse módulo define como a escola opera em aspectos que precisam ser compreendidos por mais de um módulo, como turnos, blocos de horário, políticas de prioridade, limites institucionais e regras gerais de deslocamento.
+No tipo de empresa Escola, o módulo Parâmetros fornece as políticas e configurações institucionais necessárias aos módulos escolares, como turnos, blocos de horário, políticas de prioridade, limites institucionais e regras gerais de deslocamento.
 
-Parâmetros Escolares não deve armazenar ocorrências operacionais de outros módulos. Disponibilidades individuais pertencem ao Cadastro de Disponibilidade; resultados de geração, conflitos e exceções pertencem à Geração de Horários.
+O Tipo de Empresa fornece o contexto utilizado para determinar quais parâmetros existem, seus valores padrão, suas regras de validação e como esses parâmetros devem ser interpretados.
+
+O módulo Parâmetros pode ser desabilitado quando o Tipo de Empresa não exigir seu uso.
+
+Parâmetros não deve armazenar ocorrências operacionais de outros módulos. Disponibilidades individuais pertencem ao Cadastro de Disponibilidade; resultados de geração, conflitos e exceções pertencem à Geração de Horários.
 
 ### Cadastro de Disponibilidade
 
@@ -126,7 +130,7 @@ O módulo deve poder ser utilizado de forma independente da Geração de Horári
 
 O cadastro pode ser alterado durante o semestre e deve permitir atribuir uma prioridade de ausência a períodos específicos.
 
-A prioridade é registrada em uma escala de 1 a 10. O significado operacional dessa escala é definido pela política vigente da empresa em Parâmetros Escolares.
+A prioridade é registrada em uma escala de 1 a 10. O significado operacional dessa escala é definido pela política vigente da empresa no módulo Parâmetros.
 
 Na política padrão, as prioridades de 1 a 8 são tratadas como restrições negociáveis com peso crescente, enquanto as prioridades 9 e 10 são tratadas como proibições de alocação.
 
@@ -138,7 +142,7 @@ Responsável por utilizar os dados acadêmicos e estruturais disponíveis, as po
 
 Quando o Cadastro de Disponibilidade estiver disponível, seus dados devem poder ser utilizados diretamente. Na ausência desse módulo, a Geração de Horários deve continuar sendo utilizável a partir de dados de disponibilidade obtidos por outro meio compatível.
 
-A Geração de Horários aplica as políticas definidas em Parâmetros Escolares, mas não é responsável por definir essas políticas.
+A Geração de Horários aplica as políticas definidas no módulo Parâmetros para o Tipo de Empresa Escola, mas não é responsável por definir essas políticas.
 
 Quando uma situação impedir uma alocação e não houver solução automática possível, essa situação deve ser registrada como uma exceção de planejamento. A exceção não deve encerrar a geração da grade: o sistema deve continuar processando as demais alocações possíveis e concluir o processo com os resultados obtidos.
 
@@ -148,9 +152,13 @@ A resolução de situações que dependam de negociação, mudança de disponibi
 
 ### Catálogo
 
-Os cadastros gerais utilizados pela escola, como professores, turmas, disciplinas, unidades e demais dados compartilhados da empresa, são fornecidos pelo Catálogo.
+Catálogo é um módulo-base genérico do Fractaw e está presente nas empresas do ecossistema.
 
-O Catálogo mantém dados mestres. Ele não define políticas de geração, disponibilidade ou comportamento específico dos módulos escolares.
+Assim como em Parâmetros, o Tipo de Empresa define como o Catálogo se comporta e quais conceitos são relevantes para aquele contexto.
+
+No tipo de empresa Escola, o Catálogo fornece os cadastros gerais utilizados pelos módulos escolares, como professores, turmas, disciplinas, unidades e demais dados mestres necessários.
+
+O Catálogo mantém dados mestres. Ele não define políticas de geração, disponibilidade ou comportamento operacional dos módulos escolares.
 
 A modelagem deste repositório considera esses dados como entradas disponíveis e não cobre as regras internas de manutenção do Catálogo.
 
@@ -196,7 +204,9 @@ Cadastro de Disponibilidade e Geração de Horários devem permanecer funcionais
 
 ### PRE-010
 
-Parâmetros Escolares é um módulo-base do tipo de empresa Escola e concentra políticas compartilhadas entre os módulos escolares.
+Parâmetros é um módulo-base genérico do Fractaw cujo conteúdo e comportamento são definidos pelo Tipo de Empresa.
+
+No tipo de empresa Escola, ele concentra as políticas compartilhadas pelos módulos escolares.
 
 ### PRE-011
 
@@ -204,7 +214,15 @@ Quando módulos compatíveis estiverem disponíveis em conjunto, eles devem pode
 
 ### PRE-012
 
-O Catálogo é responsável por dados mestres; Parâmetros Escolares é responsável por políticas institucionais; módulos funcionais são responsáveis por seus próprios dados operacionais e processos.
+O Catálogo é responsável por dados mestres; Parâmetros é responsável por políticas e configurações definidas pelo Tipo de Empresa; módulos funcionais são responsáveis por seus próprios dados operacionais e processos.
+
+### PRE-013
+
+O Tipo de Empresa é o contexto utilizado para definir o comportamento dos módulos-base Catálogo e Parâmetros.
+
+### PRE-014
+
+O módulo Parâmetros pode ser desabilitado para Tipos de Empresa que não necessitem de configuração própria por meio desse módulo.
 
 ---
 
@@ -233,6 +251,6 @@ A visão geral pode ser considerada suficientemente definida quando:
 - os objetivos específicos forem coerentes com o problema;
 - o escopo estiver delimitado;
 - os principais itens fora de escopo estiverem explícitos;
-- a responsabilidade de Catálogo, Parâmetros Escolares, Cadastro de Disponibilidade e Geração de Horários estiver clara;
+- a responsabilidade de Tipo de Empresa, Catálogo, Parâmetros, Cadastro de Disponibilidade e Geração de Horários estiver clara;
 - as premissas principais estiverem registradas;
 - as questões que afetam diretamente as regras de geração estiverem identificadas.
