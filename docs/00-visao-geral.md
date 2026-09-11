@@ -54,26 +54,35 @@ Permitir que a grade seja revisada e ajustada sem perder a possibilidade de veri
 
 ### 5.1 Dentro do escopo
 
-Liste os assuntos, processos e informações que pertencem ao problema que será modelado.
-
-> Perguntas de apoio:
-> - Quais elementos precisam ser considerados para montar uma grade?
-> - Quais informações influenciam uma alocação?
-> - Quais atividades fazem parte do planejamento de horários?
-
-- [Preencher]
-- [Preencher]
-- [Preencher]
+- professores e suas disponibilidades;
+- turmas e suas necessidades de horário;
+- disciplinas e suas cargas horárias;
+- associação entre professores, turmas e disciplinas;
+- períodos, turnos e blocos de horário;
+- unidades escolares e ambientes físicos;
+- laboratórios e demais recursos necessários para determinadas aulas;
+- restrições contratuais, legais e institucionais que afetem a alocação;
+- preferências de horário quando forem relevantes para o planejamento;
+- tempo de deslocamento entre unidades;
+- criação e ajuste da grade de horários;
+- identificação de conflitos de alocação;
+- validação da consistência da grade;
+- apresentação dos motivos que impedem ou dificultam uma alocação.
 
 ### 5.2 Fora do escopo
 
-Liste explicitamente assuntos relacionados à escola que não serão tratados pelo sistema.
-
-Esta seção evita que o projeto evolua para um sistema completo de gestão escolar sem necessidade.
-
-- [Preencher]
-- [Preencher]
-- [Preencher]
+- matrícula de alunos;
+- controle de frequência;
+- lançamento e cálculo de notas;
+- emissão de boletins;
+- gestão financeira da instituição;
+- mensalidades e cobranças;
+- folha de pagamento;
+- biblioteca;
+- ambiente virtual de aprendizagem;
+- conteúdo e planejamento pedagógico das aulas;
+- comunicação com responsáveis e alunos;
+- gestão completa de recursos humanos.
 
 ---
 
