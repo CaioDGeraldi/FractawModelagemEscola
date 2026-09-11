@@ -1,14 +1,29 @@
 # Requisitos de Horário Escolar
 
-Repositório destinado à modelagem e especificação de requisitos de um sistema de planejamento de horários escolares.
+Repositório destinado à modelagem e especificação de requisitos do domínio de planejamento de horários escolares que será incorporado ao FractawModules no contexto do Tipo de Empresa Escola.
 
-O foco deste projeto é compreender e documentar o problema de negócio antes de qualquer decisão de implementação.
+O foco deste projeto é compreender o domínio, definir responsabilidades e especificar requisitos antes das decisões de implementação.
+
+## Relação com o FractawModules
+
+A modelagem respeita as decisões arquiteturais vigentes do FractawModules, especialmente a separação entre:
+
+- plataforma compartilhada;
+- Tipo de Empresa;
+- referências estruturais do domínio;
+- Parâmetros;
+- módulos operacionais.
+
+Este repositório não define o mecanismo técnico de composição por `TipoEmpresa`.
+
+O documento `docs/contexto-fractaw.md` registra as fronteiras que devem orientar a modelagem.
 
 ## Objetivo do repositório
 
 Registrar, de forma incremental e rastreável:
 
 - visão geral do sistema;
+- contexto de integração com o FractawModules;
 - glossário do domínio;
 - atores e partes interessadas;
 - regras de negócio;
@@ -23,6 +38,7 @@ Registrar, de forma incremental e rastreável:
 
 ```text
 docs/
+├── contexto-fractaw.md
 ├── 00-visao-geral.md
 ├── 01-glossario.md
 ├── 02-atores-e-partes-interessadas.md
@@ -45,7 +61,7 @@ Os arquivos serão adicionados conforme cada etapa da modelagem for desenvolvida
 
 ## Ordem de modelagem
 
-1. Problema, objetivos, escopo e fronteira do sistema
+1. Problema, objetivos, escopo e fronteira do domínio
 2. Glossário do domínio
 3. Atores e partes interessadas
 4. Regras de negócio
@@ -55,3 +71,5 @@ Os arquivos serão adicionados conforme cada etapa da modelagem for desenvolvida
 8. Modelo conceitual
 9. Fluxos e estados
 10. Rastreabilidade e critérios de aceitação
+
+Durante todas as etapas, novos conceitos devem ser classificados como referência estrutural, política/configuração ou estado operacional antes de qualquer decisão de implementação.
