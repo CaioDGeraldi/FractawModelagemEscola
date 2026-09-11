@@ -12,54 +12,41 @@ Descreva brevemente por que este documento existe e qual aspecto do sistema ele 
 
 ## 2. Problema
 
-Descreva o problema real enfrentado pela instituição de ensino.
+A elaboração de horários escolares exige conciliar professores, turmas, disciplinas, carga horária, ambientes e diferentes restrições de disponibilidade e alocação.
 
-Evite descrever funcionalidades, telas, banco de dados ou soluções técnicas.
+Quando esse planejamento é feito manualmente ou com informações dispersas, conflitos podem passar despercebidos e alterações em um horário podem gerar novos problemas em outras partes da grade. A complexidade aumenta quando existem laboratórios, mais de uma unidade, restrições contratuais ou legais e professores com disponibilidade limitada.
 
-> Perguntas de apoio:
-> - Qual situação atual precisa ser melhorada?
-> - Quem é afetado por esse problema?
-> - Por que o processo atual é difícil?
-> - Quais consequências surgem quando o problema não é bem resolvido?
-> - Quais fatores tornam o planejamento de horários complexo?
-
-### Texto
-
-[Preencher]
+O problema central é construir e manter uma grade de horários válida sem perder o controle das restrições envolvidas.
 
 ---
 
 ## 3. Objetivo geral
 
-Descreva, em uma frase ou pequeno parágrafo, o resultado principal que o sistema deve ajudar a alcançar.
-
-O objetivo deve expressar **o resultado desejado**, e não a forma de implementação.
-
-### Texto
-
-[Preencher]
+Apoiar o planejamento da grade de horários escolares, tornando mais simples identificar conflitos, respeitar as restrições da instituição e ajustar a grade quando necessário.
 
 ---
 
 ## 4. Objetivos específicos
 
-Liste resultados menores que contribuem diretamente para o objetivo geral.
-
-Use identificadores para permitir rastreabilidade futura.
-
 ### OBJ-001
 
-[Preencher]
+Considerar de forma conjunta as informações de professores, turmas, disciplinas, horários, ambientes e demais elementos relevantes para o planejamento da grade.
 
 ### OBJ-002
 
-[Preencher]
+Reduzir conflitos de alocação entre professores, turmas, horários e espaços físicos.
 
 ### OBJ-003
 
-[Preencher]
+Permitir que restrições de disponibilidade, infraestrutura, deslocamento e regras institucionais sejam consideradas durante o planejamento.
 
-> Adicione novos objetivos apenas quando representarem resultados distintos e necessários.
+### OBJ-004
+
+Facilitar a identificação dos motivos que impedem ou dificultam uma determinada alocação.
+
+### OBJ-005
+
+Permitir que a grade seja revisada e ajustada sem perder a possibilidade de verificar sua consistência.
 
 ---
 
