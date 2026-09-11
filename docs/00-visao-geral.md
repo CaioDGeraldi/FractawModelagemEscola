@@ -105,11 +105,15 @@ Entregar, quando houver exceções não resolvidas, uma grade parcial acompanhad
 
 ## 6. Fronteira do sistema
 
-O domínio de horários escolares é dividido em duas responsabilidades principais:
+O domínio de horários escolares é dividido em duas responsabilidades principais.
+
+Cada módulo deve ser capaz de funcionar de forma autônoma. A integração entre módulos ocorre quando ambos estiverem disponíveis, sem transformar um módulo em dependência obrigatória de execução do outro.
 
 ### Cadastro de Disponibilidade
 
 Responsável por registrar, para cada semestre, a disponibilidade dos professores utilizada no planejamento da grade.
+
+O módulo deve poder ser utilizado de forma independente da Geração de Horários.
 
 O cadastro pode ser alterado durante o semestre e deve permitir atribuir uma prioridade de ausência a períodos específicos.
 
@@ -120,7 +124,9 @@ O sistema deve fornecer uma política padrão. Nessa configuração inicial, as 
 A política padrão não substitui uma política definida pela empresa.
 ### Geração de Horários
 
-Responsável por utilizar os dados acadêmicos e estruturais disponíveis, juntamente com o Cadastro de Disponibilidade, para gerar automaticamente a grade de horários.
+Responsável por utilizar os dados acadêmicos e estruturais disponíveis para gerar automaticamente a grade de horários.
+
+Quando o módulo Cadastro de Disponibilidade estiver disponível, seus dados devem poder ser utilizados diretamente pela Geração de Horários. Na ausência desse módulo, a Geração de Horários deve continuar sendo utilizável a partir de dados de disponibilidade obtidos por outro meio compatível com suas necessidades.
 
 Quando uma situação impedir uma alocação e não houver solução automática possível, essa situação deve ser registrada como uma exceção de planejamento. A exceção não deve encerrar a geração da grade: o sistema deve continuar processando as demais alocações possíveis e concluir o processo com os resultados obtidos.
 
@@ -169,6 +175,14 @@ Cada empresa pode definir como os níveis de prioridade de ausência devem ser i
 ### PRE-008
 
 Na ausência de uma política própria da empresa, será utilizada uma política padrão em que as prioridades 9 e 10 proíbem a alocação e as prioridades de 1 a 8 permanecem negociáveis, com peso crescente.
+
+### PRE-009
+
+Cada módulo do domínio de horários escolares deve permanecer funcional de forma independente.
+
+### PRE-010
+
+Quando módulos compatíveis estiverem disponíveis em conjunto, eles devem poder compartilhar informações para reduzir duplicação de cadastro e melhorar o fluxo de trabalho, sem criar dependência obrigatória entre eles.
 
 ---
 
