@@ -1,75 +1,79 @@
-# Requisitos de Horário Escolar
+# FractawModelagemEscola
 
-Repositório destinado à modelagem e especificação de requisitos do domínio de planejamento de horários escolares que será incorporado ao FractawModules no contexto do Tipo de Empresa Escola.
+Repositório de modelagem do **Tipo de Empresa Escola** no FractawModules.
 
-O foco deste projeto é compreender o domínio, definir responsabilidades e especificar requisitos antes das decisões de implementação.
+Este projeto registra o domínio escolar, suas referências estruturais, as políticas que precisam ser fornecidas pela capacidade genérica de Parâmetros e os módulos funcionais próprios da Escola.
+
+O objetivo é definir responsabilidades, regras, requisitos e fronteiras de domínio antes das decisões de implementação no FractawModules.
 
 ## Relação com o FractawModules
 
-A modelagem respeita as decisões arquiteturais vigentes do FractawModules, especialmente a separação entre:
+Esta modelagem respeita as decisões arquiteturais vigentes do FractawModules:
 
-- plataforma compartilhada;
-- Tipo de Empresa;
-- referências estruturais do domínio;
-- Parâmetros;
-- módulos operacionais.
+- `Empresa` é o tenant;
+- `TipoEmpresa` define contexto e aplicabilidade, mas não executa regras de domínio;
+- a plataforma não depende de código específico da Escola;
+- referências próprias da Escola não pertencem ao Catálogo de Produtos;
+- Parâmetros é uma capacidade-base genérica do FractawModules;
+- módulos escolares mantêm seus próprios processos e estados operacionais;
+- o mecanismo técnico de composição por `TipoEmpresa` é responsabilidade do FractawModules.
 
-Este repositório não define o mecanismo técnico de composição por `TipoEmpresa`.
+O documento `docs/contexto-fractaw.md` registra essas fronteiras.
 
-O documento `docs/contexto-fractaw.md` registra as fronteiras que devem orientar a modelagem.
+## Escopo da modelagem
 
-## Objetivo do repositório
+A modelagem do Tipo de Empresa Escola é organizada em quatro áreas:
 
-Registrar, de forma incremental e rastreável:
+```text
+Escola
+├── referências estruturais
+├── parâmetros aplicáveis
+└── módulos
+    ├── Disponibilidade
+    └── Gestão de Horários
+```
 
-- visão geral do sistema;
-- contexto de integração com o FractawModules;
-- glossário do domínio;
-- atores e partes interessadas;
-- regras de negócio;
-- casos de uso;
-- requisitos funcionais;
-- requisitos não funcionais;
-- modelo conceitual;
-- fluxos e estados;
-- rastreabilidade entre os artefatos.
+Novos módulos escolares poderão ser adicionados quando seus requisitos forem modelados.
 
-## Organização prevista
+## Organização
 
 ```text
 docs/
 ├── contexto-fractaw.md
-├── 00-visao-geral.md
+├── 00-visao-geral-escola.md
 ├── 01-glossario.md
 ├── 02-atores-e-partes-interessadas.md
-├── 03-regras-de-negocio.md
-├── 04-casos-de-uso.md
-├── 05-requisitos-funcionais.md
-├── 06-requisitos-nao-funcionais.md
-├── 07-modelo-conceitual.md
-├── 08-fluxos-e-estados.md
-└── 09-rastreabilidade.md
+├── 03-referencias-estruturais.md
+├── 04-parametros.md
+│
+└── modulos/
+    ├── disponibilidade/
+    │   └── 00-visao-geral.md
+    │
+    └── gestao-horarios/
+        └── 00-visao-geral.md
 
 diagramas/
-├── casos-de-uso.drawio
-├── atividades.drawio
-├── estados.drawio
-└── modelo-conceitual.drawio
+└── arquivos de modelagem adicionados conforme necessidade
 ```
 
-Os arquivos serão adicionados conforme cada etapa da modelagem for desenvolvida e revisada.
+Os arquivos previstos serão adicionados de forma incremental conforme cada etapa for desenvolvida e revisada.
 
-## Ordem de modelagem
+## Regra de classificação
 
-1. Problema, objetivos, escopo e fronteira do domínio
-2. Glossário do domínio
-3. Atores e partes interessadas
-4. Regras de negócio
-5. Casos de uso
-6. Requisitos funcionais
-7. Requisitos não funcionais
-8. Modelo conceitual
-9. Fluxos e estados
-10. Rastreabilidade e critérios de aceitação
+Antes de decidir onde um conceito pertence, a modelagem deve identificar sua natureza:
 
-Durante todas as etapas, novos conceitos devem ser classificados como referência estrutural, política/configuração ou estado operacional antes de qualquer decisão de implementação.
+- **referência estrutural:** algo que existe no domínio e possui identidade própria;
+- **política/configuração:** define como uma Empresa decidiu operar;
+- **estado operacional:** fato ou resultado pertencente a um processo ou módulo.
+
+A classificação é feita pelo significado do conceito, não pela conveniência de implementação.
+
+## Estado atual
+
+Os primeiros módulos funcionais em modelagem são:
+
+- **Disponibilidade**;
+- **Gestão de Horários**.
+
+A geração automática da grade é uma responsabilidade de Gestão de Horários, não o nome do módulo como um todo.
