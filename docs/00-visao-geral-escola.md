@@ -2,7 +2,7 @@
 
 ## 1. Propósito
 
-Definir o escopo conceitual do Tipo de Empresa Escola no FractawModules e estabelecer as fronteiras que orientarão a modelagem de seus dados, políticas e módulos.
+Definir o escopo conceitual do Tipo de Empresa Escola no FractawModules e estabelecer as fronteiras que orientarão a modelagem de seus dados, políticas, atores e módulos.
 
 Este documento não define estrutura de banco de dados, classes Django, APIs ou mecanismo de composição em runtime.
 
@@ -35,19 +35,17 @@ Tipo de Empresa Escola
 
 São conceitos do domínio escolar que possuem identidade própria e podem ser referenciados por diferentes processos ou históricos.
 
-Entre os candidatos já identificados estão:
+As referências iniciais em modelagem são:
 
 - Professor;
-- Disciplina;
 - Curso;
+- Disciplina;
 - Turma;
+- Período Letivo;
 - Site ou Unidade Escolar;
 - Sala;
 - Laboratório;
-- Período Letivo;
 - Bloco de Aula.
-
-A classificação definitiva de cada conceito será feita durante a modelagem.
 
 Essas referências não pertencem ao Catálogo de Produtos da plataforma.
 
@@ -55,7 +53,7 @@ Essas referências não pertencem ao Catálogo de Produtos da plataforma.
 
 Parâmetros é uma capacidade-base genérica do FractawModules.
 
-A modelagem da Escola deve identificar quais políticas e configurações são necessárias no contexto escolar, qual sua semântica e quais módulos podem consumi-las.
+A modelagem da Escola identifica quais políticas e configurações são necessárias no contexto escolar, qual sua semântica e quais módulos podem consumi-las.
 
 A Empresa mantém os valores efetivamente vigentes.
 
@@ -74,15 +72,35 @@ Até o momento, dois módulos escolares estão em modelagem:
 
 #### Disponibilidade
 
-Responsável pelo processo de declaração, manutenção, revisão e disponibilização da disponibilidade docente.
+Responsável pelo processo de declaração, manutenção e disponibilização da disponibilidade docente.
 
 #### Gestão de Horários
 
 Responsável pelo planejamento, geração, revisão, exceções, remontagem e resultados da grade de horários.
 
-Os módulos devem manter ownership de seu próprio estado operacional e podem consumir referências e políticas por contratos adequados.
+Os módulos mantêm ownership de seu próprio estado operacional e podem consumir referências e políticas por contratos adequados.
 
-## 4. Fronteiras com a plataforma
+## 4. Atores e autorização
+
+A modelagem separa três dimensões:
+
+```text
+papel empresarial
+≠ função escolar
+≠ autorização funcional
+```
+
+Exemplo:
+
+Um Diretor pode possuir papel empresarial `MEMBRO` e, separadamente, receber autorização para operar Gestão de Horários.
+
+Da mesma forma, possuir papel `PROPRIETARIO` ou `ADMINISTRADOR_GERAL` não significa automaticamente poder gerar ou gerenciar horários.
+
+O Professor é uma referência estrutural do domínio e, quando atua como usuário do sistema, é o ator responsável por informar sua própria disponibilidade no fluxo normal.
+
+A forma técnica de autorização permanece responsabilidade do FractawModules.
+
+## 5. Fronteiras com a plataforma
 
 A Escola pode depender de capacidades públicas da plataforma FractawModules.
 
@@ -98,12 +116,14 @@ O Catálogo de Produtos permanece uma capacidade própria da plataforma e não �
 
 Parâmetros permanece uma capacidade-base genérica e recebe semântica concreta conforme os requisitos do contexto Escola.
 
-## 5. Escopo atual
+## 6. Escopo atual
 
 Faz parte da modelagem atual:
 
 - identificação das referências estruturais necessárias ao domínio Escola;
-- identificação das políticas escolares que precisam ser configuráveis;
+- identificação dos atores e responsabilidades;
+- separação entre função escolar e autorização funcional;
+- identificação das políticas escolares configuráveis;
 - modelagem do módulo Disponibilidade;
 - modelagem do módulo Gestão de Horários;
 - integração conceitual entre esses elementos;
@@ -114,10 +134,11 @@ Não faz parte deste repositório:
 - implementação do FractawModules;
 - decisões internas de persistência;
 - escolha de padrões técnicos para resolver o contexto de `TipoEmpresa`;
+- implementação do mecanismo de autorização;
 - redefinição do Catálogo de Produtos;
 - funcionalidades escolares ainda não modeladas e sem requisitos definidos.
 
-## 6. Princípios de modelagem
+## 7. Princípios de modelagem
 
 ### MOD-001 — Ownership explícito
 
@@ -141,7 +162,13 @@ Módulos escolares não devem assumir ownership do estado interno de outros mód
 
 Integrações podem existir por contratos explícitos.
 
-## 7. Questões estruturais em aberto
+### MOD-006 — Autorização por capacidade
+
+Papel empresarial e função escolar não devem ser usados como substitutos de autorização funcional.
+
+Operações de módulo devem depender da capacidade funcional necessária, sem acoplamento obrigatório a títulos como Diretor ou a papéis empresariais específicos.
+
+## 8. Questões estruturais em aberto
 
 ### QE-001 — Referências definitivas
 
@@ -154,3 +181,7 @@ Conceitos como Bloco de Aula e relações de deslocamento devem ser classificado
 ### QE-003 — Evolução do Company Type
 
 Novos módulos escolares deverão ser incorporados sem exigir que os módulos existentes assumam responsabilidades que não lhes pertencem.
+
+### QE-004 — Granularidade das autorizações
+
+Quais capacidades funcionais precisam ser distinguidas em Disponibilidade e Gestão de Horários?
