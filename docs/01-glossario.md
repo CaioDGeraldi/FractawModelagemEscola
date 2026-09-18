@@ -4,59 +4,108 @@
 
 Estabelecer um vocabulário comum para a modelagem do Tipo de Empresa Escola no FractawModules.
 
-Os termos deste documento descrevem conceitos de domínio. Eles não determinam classes, tabelas, endpoints ou mecanismos técnicos.
+Os termos deste documento descrevem conceitos de domínio e contratos arquiteturais vigentes. Eles não determinam classes, tabelas, endpoints ou mecanismos técnicos além do que já foi decidido no FractawModules.
 
 ## Termos
 
 ### Empresa
 
-Tenant do FractawModules ao qual pertencem usuários, configurações e dados de negócio.
+Tenant do FractawModules ao qual pertencem vínculos, configurações e dados de negócio.
 
 Uma Empresa pode estar associada ao Tipo de Empresa Escola.
 
 ### Tipo de Empresa Escola
 
-Contexto de negócio que define quais conceitos, políticas e módulos são aplicáveis a uma Empresa escolar.
+Contexto de negócio que define quais conceitos, políticas, Cargos e módulos são aplicáveis a uma Empresa escolar.
 
-Não executa regras de negócio e não substitui os módulos do domínio.
+Não executa regras de negócio e não habilita módulos automaticamente.
+
+### Usuario
+
+Identidade global da pessoa no FractawModules.
+
+Não representa, por si só, Professor, Cargo, vínculo empresarial ou autorização dentro de uma Empresa.
 
 ### EmpresaUsuario
 
-Vínculo entre um usuário da plataforma e uma Empresa.
+Vínculo entre um Usuario e uma Empresa.
 
-É parte da plataforma FractawModules e não deve ser confundido com uma referência escolar como Professor.
+É o contexto empresarial ao qual Cargo, papel empresarial e concessões modulares pertencem.
+
+### Cargo
+
+Classificação da função organizacional exercida pela pessoa dentro de um TipoEmpresa.
+
+Exemplos escolares podem incluir `Professor`, `Diretor` e `Coordenador`.
+
+Cargo não concede autorização.
+
+O termo descritivo “função escolar” não representa um subsistema separado de Cargo.
 
 ### Papel empresarial
 
-Papel de autoridade geral existente no FractawModules, como `PROPRIETARIO`, `ADMINISTRADOR_GERAL` ou `MEMBRO`.
+Posição administrativa transversal do vínculo empresarial:
 
-O papel empresarial não determina sozinho quais operações escolares um usuário pode executar.
+- `PROPRIETARIO`;
+- `ADMINISTRADOR_GERAL`;
+- `MEMBRO`.
 
-### Função escolar
+Papel empresarial não é Cargo.
 
-Função exercida por uma pessoa dentro do contexto da instituição, como Diretor, Professor ou Coordenador.
+No contrato modular vigente, Proprietário e Administrador Geral derivam autoridade `ADMINISTRADOR` nos módulos efetivamente habilitados e aplicáveis.
 
-Função escolar não é sinônimo de papel empresarial nem de autorização funcional.
+### Autoridade modular
 
-### Autorização funcional
+Nível de autoridade dentro de um módulo.
 
-Permissão para executar uma capacidade específica de um módulo ou domínio.
+Para Membros, os níveis mínimos vigentes são:
 
-Exemplos conceituais:
+- `USUARIO`;
+- `ADMINISTRADOR`.
 
-- gerenciar horários;
-- gerar horários;
-- informar a própria disponibilidade.
+Proprietário e Administrador Geral recebem autoridade modular `ADMINISTRADOR` por derivação do papel empresarial quando o módulo satisfaz os gates de aplicabilidade e habilitação.
 
-A forma técnica de representar essas autorizações pertence ao FractawModules e está fora do escopo desta modelagem.
+### Permissão funcional
+
+Autorização para uma operação concreta dentro de um módulo, quando um requisito exigir granularidade além da autoridade modular mínima.
+
+Exemplos potenciais em Gestão de Horários incluem gerar, revisar, remontar ou publicar uma grade.
+
+O schema e a relação dessas permissões com a autoridade modular ainda não estão definidos.
+
+### Capacidade
+
+Entitlement empresarial do FractawModules para recurso opcional, limite ou vigência.
+
+Não deve ser utilizado como sinônimo de autoridade modular ou permissão funcional do usuário.
+
+### Aplicabilidade
+
+Compatibilidade conceitual de um módulo com determinado TipoEmpresa.
+
+Ser aplicável ao TipoEmpresa Escola não significa estar habilitado para todas as Empresas Escola.
+
+### Habilitação de módulo
+
+Estado empresarial que torna um módulo efetivamente habilitado para determinada Empresa, desde que permaneça aplicável.
+
+A existência do código ou a aplicabilidade não substituem a habilitação.
+
+### Concessão modular
+
+Concessão pertencente a um EmpresaUsuario `MEMBRO` para um módulo habilitado e aplicável.
+
+Pode resultar em autoridade modular `USUARIO` ou `ADMINISTRADOR` conforme o contrato vigente.
 
 ### Diretor
 
-Ator de negócio que exerce função de direção escolar.
+Função organizacional escolar compatível com Cargo.
 
-Um Diretor pode operar Gestão de Horários quando possuir a autorização funcional necessária.
+Diretor não é sinônimo de `PROPRIETARIO` nem de `ADMINISTRADOR_GERAL`.
 
-Ser Diretor não implica ser `PROPRIETARIO` ou `ADMINISTRADOR_GERAL`.
+Um Diretor com papel empresarial `MEMBRO` pode receber concessão modular e operar Gestão de Horários conforme a autoridade e as futuras permissões funcionais aplicáveis.
+
+Não existe, nesta modelagem, uma entidade estrutural `Diretor` separada apenas para representar a função organizacional.
 
 ### Professor
 
@@ -64,7 +113,9 @@ Referência estrutural que representa um docente no domínio Escola.
 
 Pode estar associado a disciplinas, disponibilidade, ofertas de disciplina e grades.
 
-Quando um Professor utiliza o sistema, sua referência escolar deve poder ser relacionada à identidade de acesso correspondente sem que os dois conceitos se tornem a mesma coisa.
+A referência estrutural Professor permanece distinta de `Cargo Professor`, `Usuario` e `EmpresaUsuario`.
+
+Quando o docente possui acesso ao Fractaw, pode existir uma associação entre Professor e EmpresaUsuario. A forma técnica dessa associação permanece em aberto.
 
 ### Curso
 
@@ -76,7 +127,7 @@ Pode possuir uma Matriz Curricular e organizar Turmas quando esse conceito fizer
 
 Referência estrutural que representa um componente curricular com identidade própria.
 
-Uma mesma Disciplina pode participar de diferentes Cursos e diferentes Ofertas de Disciplina.
+Uma mesma Disciplina pode participar de diferentes Cursos e Ofertas de Disciplina.
 
 ### Matriz Curricular
 
@@ -112,17 +163,15 @@ Uma Oferta pode possuir mais de um Professor atribuído.
 
 Situação em que uma mesma aula/alocação possui mais de um Professor simultaneamente.
 
-A co-docência é opcional: a regra geral continua permitindo uma aula com apenas um Professor.
-
-Professores atribuídos a uma Oferta não precisam necessariamente participar juntos de todas as aulas dessa Oferta.
+A co-docência é opcional. Professores atribuídos a uma Oferta não precisam necessariamente participar juntos de todas as aulas dessa Oferta.
 
 ### Período Letivo
 
-Referência estrutural que delimita uma vigência acadêmica, como semestre ou ano letivo.
+Referência estrutural que delimita uma vigência acadêmica concreta, como semestre ou ano letivo.
 
-Possui início e término concretos; sua organização temporal é definida pela Empresa por meio de Parâmetros.
+Possui identidade e datas efetivas próprias.
 
-Não deve ser confundido com Turno ou Bloco de Aula.
+Uma política de duração padrão ou regra geral de calendário pode ser candidata a Parâmetros, mas as datas concretas do Período Letivo não se tornam Parâmetro apenas por serem configuráveis.
 
 ### Site
 
@@ -148,35 +197,41 @@ Não é tratado como entidade estrutural paralela a Ambiente.
 
 Relação estrutural direcional entre dois Sites da mesma Empresa.
 
-O tempo considerado para esse deslocamento é uma configuração temporal definida pela Empresa em Parâmetros e pode divergir por sentido.
+O tempo específico necessário para o par, como `Site A → Site B = 35 min`, é tratado nesta modelagem como dado próprio da relação estrutural.
+
+Uma margem ou tolerância geral aplicada aos deslocamentos é política candidata a Parâmetros.
 
 ### Turno
 
 Referência temporal organizacional, como manhã, tarde ou noite.
 
-Pode ser utilizada por Turmas e para organizar Blocos de Aula.
+Pode ser utilizada por Turmas e organizar Blocos de Aula.
 
-Seus horários são definidos pela Empresa em Parâmetros.
+Horários concretos pertencem à organização do Turno; defaults ou políticas gerais de horário podem ser candidatos a Parâmetros quando houver requisito compartilhável.
 
 ### Bloco de Aula
 
-Faixa concreta e alocável de tempo utilizada por Disponibilidade e Gestão de Horários.
+Referência concreta e alocável de tempo utilizada por Disponibilidade e Gestão de Horários.
 
-Possui identidade para que os módulos possam referenciar a mesma faixa. Sua duração e organização derivam da configuração temporal definida pela Empresa.
+Possui identidade, horário de início e horário de término.
+
+Uma duração padrão de aula pode ser Parâmetro, mas `Bloco 3 = 09:00–09:50` continua sendo referência concreta.
 
 ### Intervalo
 
-Configuração temporal em Parâmetros que define uma faixa não alocável dentro da organização da Empresa, por exemplo recreio ou pausa entre Blocos.
+Faixa concreta não alocável dentro da organização temporal escolar, como recreio ou pausa entre Blocos.
 
-Pode variar conforme Empresa, Site, Turno ou outro escopo permitido.
+A modelagem não exige que Intervalo possua entidade estrutural independente.
 
-Não é tratado como referência estrutural independente.
+Uma duração padrão, regra geral ou política de Intervalo pode ser candidata a Parâmetros; uma faixa concreta como `08:40–09:00` não deve ser classificada como Parâmetro somente por ser configurável.
 
 ### Interstício
 
-Configuração temporal em Parâmetros que define o tempo mínimo livre exigido entre determinadas atividades.
+Regra de tempo mínimo livre exigido entre determinadas atividades.
 
-Interstício não é sinônimo de Intervalo: um Intervalo é uma faixa não alocável explicitamente configurada; o Interstício é uma regra mínima de separação.
+Quando definido como política institucional ou contratual compartilhável, é candidato natural a Parâmetros.
+
+Interstício não é sinônimo de Intervalo.
 
 ### Disponibilidade
 
@@ -192,9 +247,11 @@ Seu significado operacional é definido pela política vigente da Empresa.
 
 ### Parâmetro
 
-Política ou configuração que define como uma Empresa decidiu operar dentro do contexto Escola.
+Política ou configuração empresarial compartilhável que responde a como a Empresa decidiu operar.
 
-No contexto temporal, Parâmetros é a fonte das definições de duração, horários, Intervalos, Interstícios, deslocamentos e demais valores temporais configuráveis.
+Exemplos fortes no contexto Escola incluem duração padrão de aula, prioridade mínima bloqueante, interpretação da prioridade, máximo de aulas consecutivas, interstício institucional e margem geral de deslocamento.
+
+`Configurável` não é critério suficiente para classificar um conceito como Parâmetro.
 
 ### Gestão de Horários
 
@@ -208,16 +265,29 @@ Resultado estruturado da alocação de aulas em Professores, Turmas, Blocos de A
 
 Situação identificada durante o planejamento que impede ou compromete uma alocação e exige tratamento explícito ou intervenção humana.
 
-## Regra terminológica
+## Regras terminológicas
 
 ```text
-papel empresarial
-≠ função escolar
-≠ autorização funcional
+Cargo
+≠ Papel empresarial
+≠ Autoridade modular
+≠ Permissão funcional
 ```
 
 ```text
-Professor
+Capacidade empresarial
+≠ autorização do usuário
+```
+
+```text
+aplicabilidade
+≠ habilitação
+≠ concessão
+```
+
+```text
+Professor estrutural
+≠ Cargo Professor
 ≠ Usuario
 ≠ EmpresaUsuario
 ```
@@ -239,14 +309,11 @@ Intervalo
 ≠ Interstício
 ```
 
-E quanto à responsabilidade temporal:
+E, para classificação:
 
 ```text
-Bloco de Aula
-→ referência alocável
-
-Intervalo / Interstício / durações / horários
-→ configurações temporais em Parâmetros
+política/default
+≠ referência/ocorrência concreta
 ```
 
 Os conceitos podem estar relacionados, mas não representam a mesma responsabilidade de domínio.
