@@ -145,7 +145,7 @@ A base física e temporal distingue:
 - Sala/Laboratório como classificações ou capacidades de Ambiente;
 - Deslocamento estrutural específico entre Sites e margem geral de deslocamento;
 - Período Letivo, Turno e Bloco de Aula como referências/ocorrências concretas;
-- políticas/defaults temporais reais de ocorrências concretas configuráveis.
+- políticas/defaults temporais compartilháveis, separadas das ocorrências concretas que possam ser configuradas pela Empresa.
 
 A geração automática da grade é uma responsabilidade de Gestão de Horários, não o nome do módulo como um todo.
 
