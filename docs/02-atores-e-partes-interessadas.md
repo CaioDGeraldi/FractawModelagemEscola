@@ -2,38 +2,71 @@
 
 ## 1. Objetivo
 
-Identificar quem interage com os módulos do Tipo de Empresa Escola e separar função de negócio, identidade de plataforma e autorização funcional.
+Identificar quem interage com os módulos do Tipo de Empresa Escola e separar função organizacional, identidade de plataforma, papel empresarial, autoridade modular e futuras permissões funcionais.
 
-Este documento não define a implementação técnica das permissões.
+Este documento não define schema nem implementação técnica de permissões.
 
-## 2. Princípio de autorização
+## 2. Dimensões de identidade e autorização
 
-A modelagem adota três dimensões independentes:
+A modelagem respeita as dimensões existentes no FractawModules:
 
 ```text
+Cargo
+→ função organizacional exercida no contexto do TipoEmpresa
+
 Papel empresarial
 → PROPRIETARIO / ADMINISTRADOR_GERAL / MEMBRO
 
-Função escolar
-→ Diretor / Professor / Coordenador / outras
+Autoridade modular
+→ autoridade efetiva dentro de um módulo habilitado e aplicável
 
-Autorização funcional
-→ capacidades específicas dos módulos
+Permissão funcional
+→ operação concreta, quando requisitos futuros exigirem granularidade adicional
 ```
 
-Nenhuma dessas dimensões deve ser usada como sinônimo das outras.
+Essas dimensões não são sinônimas.
 
-Um usuário com papel empresarial `MEMBRO` pode, por exemplo, possuir autorização para gerenciar horários.
+### Cargo no contexto Escola
 
-Da mesma forma, possuir papel `PROPRIETARIO` ou `ADMINISTRADOR_GERAL` não implica automaticamente autorização funcional sobre Gestão de Horários.
+Diretor, Coordenador e outras funções puramente organizacionais devem ser tratados conceitualmente como Cargos do TipoEmpresa Escola, salvo quando um requisito futuro demonstrar a necessidade de entidade de domínio independente.
+
+Professor exige uma distinção adicional:
+
+```text
+Professor estrutural
+≠ Cargo Professor
+```
+
+A referência Professor existe no domínio mesmo sem Usuario ou EmpresaUsuario.
+
+### Contrato atual de autoridade modular
+
+Depois de satisfeitos vínculo ativo, aplicabilidade e habilitação do módulo:
+
+```text
+PROPRIETARIO
+→ ADMINISTRADOR no módulo
+
+ADMINISTRADOR_GERAL
+→ ADMINISTRADOR no módulo
+
+MEMBRO
+→ depende de concessão modular
+   ├── USUARIO
+   └── ADMINISTRADOR
+```
+
+Cargo não cria nem substitui essa autoridade.
+
+Permissões mais granulares dentro dos módulos escolares ainda não foram definidas.
 
 ## 3. Atores principais
 
 ### AT-001 — Professor
 
-Pessoa representada pela referência estrutural Professor e que, quando possui acesso ao Fractaw, atua sobre sua própria disponibilidade.
+Pessoa representada pela referência estrutural Professor e que, quando possui acesso compatível ao Fractaw, atua sobre sua própria disponibilidade.
 
-Responsabilidade principal nesta modelagem:
+Responsabilidades principais nesta modelagem:
 
 - consultar sua disponibilidade;
 - informar sua disponibilidade;
@@ -41,13 +74,21 @@ Responsabilidade principal nesta modelagem:
 
 O Professor não é responsável, no fluxo normal, por montar ou gerar a grade institucional.
 
-A forma técnica de relacionar Professor, Usuario e EmpresaUsuario ainda não é definida por este repositório.
+Quando um docente possui acesso ao sistema, pode existir associação entre sua referência Professor e um EmpresaUsuario, possivelmente com Cargo Professor.
+
+A forma de persistir `Professor ↔ EmpresaUsuario` permanece em aberto.
 
 ### AT-002 — Responsável pela Gestão de Horários
 
-Usuário da Empresa com autorização funcional para operar o módulo Gestão de Horários.
+Ator que possui autoridade suficiente para operar Gestão de Horários no contexto da Empresa.
 
-Pode exercer uma função escolar como Diretor, Coordenador ou outra função definida pela instituição.
+Pode ser, por exemplo:
+
+- Proprietário;
+- Administrador Geral;
+- Membro com concessão modular adequada.
+
+Organizacionalmente, esse usuário pode possuir Cargo Diretor, Coordenador ou outro Cargo compatível com o TipoEmpresa Escola.
 
 Responsabilidades candidatas:
 
@@ -55,24 +96,27 @@ Responsabilidades candidatas:
 - revisar resultados;
 - analisar exceções;
 - solicitar ou executar remontagem;
-- realizar demais operações administrativas do módulo que venham a ser confirmadas pelos requisitos.
+- publicar resultados, se esse caso de uso for confirmado;
+- realizar outras operações do módulo confirmadas pelos requisitos.
 
-A autorização deriva da capacidade funcional concedida ao usuário, e não do nome de seu cargo ou papel empresarial.
+A granularidade final dessas operações permanece em aberto. A autoridade modular atual não deve ser silenciosamente convertida em um catálogo de permissões que o FractawModules ainda não definiu.
 
 ### AT-003 — Diretor
 
-Ator de negócio que exerce função de direção escolar.
+Ator de negócio que exerce função organizacional de direção escolar.
 
-Na modelagem atual, Diretor é um exemplo relevante de usuário que pode receber autorização para Gestão de Horários.
+Nesta modelagem, Diretor é compatível conceitualmente com Cargo do TipoEmpresa Escola.
 
-Entretanto:
+Diretor:
 
-- Diretor não é sinônimo de `PROPRIETARIO`;
-- Diretor não é sinônimo de `ADMINISTRADOR_GERAL`;
-- Diretor pode possuir papel empresarial `MEMBRO`;
-- ser Diretor não concede automaticamente acesso a Gestão de Horários.
+- não é sinônimo de `PROPRIETARIO`;
+- não é sinônimo de `ADMINISTRADOR_GERAL`;
+- pode possuir papel empresarial `MEMBRO`;
+- não recebe autorização apenas por possuir Cargo Diretor.
 
-O ator Diretor só executa operações do módulo quando possuir a autorização funcional correspondente.
+Um Diretor `MEMBRO` precisa satisfazer o contrato modular aplicável, inclusive concessão quando necessária.
+
+Um Diretor que também seja `PROPRIETARIO` ou `ADMINISTRADOR_GERAL` segue a autoridade modular derivada vigente desses papéis.
 
 ## 4. Atores secundários potenciais
 
@@ -106,19 +150,23 @@ O Professor é responsável por informar sua própria disponibilidade no fluxo n
 
 ### RA-002
 
-A Gestão de Horários é operada por usuários explicitamente autorizados para essa capacidade.
+Gestão de Horários somente pode ser utilizada quando o módulo for aplicável e estiver efetivamente habilitado para a Empresa.
 
 ### RA-003
 
-Papel empresarial não concede, por si só, autorização funcional para módulos escolares.
+Um `MEMBRO` depende de concessão modular para obter autoridade efetiva em Gestão de Horários ou Disponibilidade quando esses módulos utilizarem o contrato modular habilitável.
 
 ### RA-004
 
-Função escolar não concede, por si só, autorização funcional.
+`PROPRIETARIO` e `ADMINISTRADOR_GERAL` seguem o contrato vigente de autoridade modular derivada `ADMINISTRADOR` nos módulos habilitados e aplicáveis.
 
 ### RA-005
 
-A autorização deve expressar a capacidade necessária, evitando regras do tipo "é Diretor, então pode gerar horários".
+Cargo não concede autorização. Regras do tipo “é Diretor, então pode gerar horários” não devem substituir o contrato de autoridade.
+
+### RA-006
+
+Autoridade modular administrativa e permissão para uma operação funcional concreta não devem ser tratadas como conceitos necessariamente idênticos antes da definição dos requisitos de permissões granulares.
 
 ## 7. Questões em aberto
 
@@ -126,10 +174,18 @@ A autorização deve expressar a capacidade necessária, evitando regras do tipo
 
 Deve existir uma operação administrativa para registrar ou corrigir disponibilidade em nome de um Professor? Em quais situações?
 
-### QA-002 — Granularidade das autorizações
+### QA-002 — Granularidade das permissões funcionais
 
-Gestão de Horários terá uma autorização ampla ou capacidades separadas, como gerar, revisar, remontar e publicar?
+Gestão de Horários precisará distinguir permissões como gerar, revisar, remontar, publicar e tratar exceções?
 
-### QA-003 — Outras funções escolares
+### QA-003 — Efeito da autoridade ADMINISTRADOR
 
-Quais funções além de Diretor e Professor precisam ser reconhecidas pelo domínio Escola, mesmo que não impliquem permissões automáticas?
+Se permissões funcionais granulares forem introduzidas, `PROPRIETARIO`, `ADMINISTRADOR_GERAL` e Membros com autoridade modular `ADMINISTRADOR` receberão todas essas operações automaticamente ou apenas autoridade administrativa para gerenciá-las?
+
+### QA-004 — Cargos escolares
+
+Quais Cargos, além de Professor, Diretor e Coordenador, são realmente necessários ao TipoEmpresa Escola?
+
+### QA-005 — Professor e acesso
+
+Como a associação entre Professor estrutural e EmpresaUsuario será representada sem tornar os conceitos equivalentes?
