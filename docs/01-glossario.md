@@ -88,7 +88,7 @@ Pode conter carga horária prevista, etapa, módulo ou outras informações curr
 
 Referência estrutural que representa um grupo acadêmico concreto dentro de determinado Período Letivo.
 
-Pode estar associada a um Curso quando a instituição utilizar esse conceito.
+Pode estar associada a Curso, Site e Turno conforme o modelo da instituição.
 
 ### Oferta de Disciplina
 
@@ -112,31 +112,47 @@ O momento em que essa atribuição é definida ainda depende dos requisitos de G
 
 Referência estrutural que delimita uma vigência acadêmica, como semestre ou ano letivo.
 
-Não deve ser confundido com turno ou bloco de aula.
+Não deve ser confundido com Turno ou Bloco de Aula.
 
-### Site / Unidade Escolar
+### Site
 
-Local físico ou unidade da Empresa Escola em que atividades acadêmicas podem ocorrer.
+Referência estrutural que representa uma unidade física da Empresa Escola.
 
-Pode possuir salas, laboratórios e relações de deslocamento com outros Sites.
+“Unidade Escolar” pode ser utilizado como termo de apresentação, mas `Site` é o termo adotado pela modelagem.
 
-### Sala
+Um Site pode possuir Ambientes e relações de deslocamento com outros Sites.
 
-Ambiente físico utilizado para atividades acadêmicas.
+### Ambiente
 
-Sua relação com Laboratório ainda deve ser refinada pela modelagem.
+Referência estrutural que representa um espaço físico alocável dentro de um Site.
+
+Sala comum, laboratório, auditório, quadra e oficina são exemplos de classificações ou características de Ambiente.
 
 ### Laboratório
 
-Ambiente físico com características ou recursos específicos exigidos por determinadas atividades ou disciplinas.
+Classificação ou conjunto de capacidades de um Ambiente preparado para atividades específicas.
 
-A modelagem ainda deve decidir se Laboratório é uma especialização de Sala ou um conceito estrutural independente.
+Não é tratado, nesta modelagem, como entidade estrutural paralela a Ambiente.
+
+### Deslocamento entre Sites
+
+Relação estrutural direcional que representa o tempo concreto necessário para ir de um Site de origem a outro Site da mesma Empresa.
+
+Uma margem institucional adicional de deslocamento é política e pertence a Parâmetros.
+
+### Turno
+
+Referência temporal organizacional, como manhã, tarde ou noite.
+
+Pode ser utilizada por Turmas e para organizar Blocos de Aula.
 
 ### Bloco de Aula
 
-Intervalo estrutural de tempo no qual uma aula pode ser alocada.
+Faixa concreta e alocável de tempo utilizada por Disponibilidade e Gestão de Horários.
 
-Se possuir identidade e for referenciado por disponibilidade, turmas e grades, deve ser tratado como referência estrutural e não como simples Parâmetro.
+Possui horário de início, horário de término e contexto suficiente para identificar sua posição na organização temporal da Escola.
+
+Intervalos não alocáveis não precisam ser representados como Blocos de Aula.
 
 ### Disponibilidade
 
@@ -162,7 +178,7 @@ Módulo funcional responsável pelo planejamento, geração, revisão, exceçõe
 
 ### Grade de Horários
 
-Resultado estruturado da alocação de aulas em professores, turmas, horários e ambientes.
+Resultado estruturado da alocação de aulas em professores, turmas, Blocos de Aula e Ambientes.
 
 ### Exceção de planejamento
 
@@ -186,7 +202,7 @@ Professor
 ≠ EmpresaUsuario
 ```
 
-E no modelo acadêmico:
+No modelo acadêmico:
 
 ```text
 Matriz Curricular
@@ -194,6 +210,14 @@ Matriz Curricular
 
 Habilitação docente
 ≠ Atribuição docente
+```
+
+E no modelo temporal:
+
+```text
+Período Letivo
+≠ Turno
+≠ Bloco de Aula
 ```
 
 Os conceitos podem estar relacionados, mas não representam a mesma responsabilidade de domínio.
