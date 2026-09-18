@@ -8,22 +8,18 @@ Este documento trata de domínio e relações conceituais. Não define models Dj
 
 ## 2. Visão geral
 
-A estrutura física e temporal é dividida em dois eixos independentes, que se encontram durante o planejamento:
-
 ```text
 Estrutura física                     Estrutura temporal
 
 Site                                 Período Letivo
  └── Ambiente                         └── Turno
-                                        └── Bloco de Aula
+                                        ├── Bloco de Aula
+                                        └── Intervalo
 
-Site ── Deslocamento ── Site
+Site ── Deslocamento ──> Site
 
               ↓
       Gestão de Horários
-              ↓
- professor + turma + disciplina
- + ambiente + bloco de aula
 ```
 
 A Gestão de Horários consome essas referências, mas não é proprietária delas.
@@ -36,94 +32,45 @@ A Gestão de Horários consome essas referências, mas não é proprietária del
 
 `Site` representa uma unidade física da Empresa Escola em que atividades acadêmicas podem ocorrer.
 
-O termo “Unidade Escolar” pode ser utilizado na interface ou comunicação de negócio, mas a modelagem utilizará `Site` para manter um termo único e compatível com o vocabulário já existente no Fractaw.
-
-Exemplos:
-
-- unidade principal;
-- prédio anexo;
-- campus distinto;
-- outra localização física operada pela mesma Empresa.
+O termo “Unidade Escolar” pode ser utilizado na interface ou comunicação de negócio, mas a modelagem utiliza `Site` como termo estrutural.
 
 Um Site pode possuir vários Ambientes.
-
-```text
-Empresa Escola
-  └── Site
-        └── Ambiente
-```
 
 ### Invariantes
 
 - um Site pertence a exatamente uma Empresa;
 - Sites relacionados em uma mesma operação escolar devem pertencer à mesma Empresa;
-- a inativação de um Site não deve apagar seu significado em históricos já produzidos.
+- a inativação de um Site não apaga seu significado em históricos.
 
 ---
 
 ## 4. Ambiente
 
-### DEC-FT-002 — Sala e Laboratório são representados pelo conceito estrutural `Ambiente`
+### DEC-FT-002 — Sala e Laboratório são representados por `Ambiente`
 
-A modelagem adota `Ambiente` como referência física alocável.
-
-Um Ambiente representa um espaço dentro de um Site em que uma atividade escolar pode ocorrer.
+`Ambiente` é a referência física alocável.
 
 Exemplos:
 
-- sala de aula comum;
+- sala comum;
 - laboratório de informática;
 - laboratório de química;
 - auditório;
 - quadra;
-- oficina;
-- outro espaço utilizável por uma atividade acadêmica.
+- oficina.
 
-Assim, `Sala` e `Laboratório` não precisam ser entidades estruturais paralelas.
+Sala e Laboratório não precisam ser entidades paralelas.
 
-```text
-Site
- └── Ambiente
-      ├── sala comum
-      ├── laboratório
-      ├── auditório
-      └── ...
-```
+A classificação do Ambiente deve permitir expressar tipo, capacidades ou recursos necessários para que Gestão de Horários verifique se ele atende a uma Oferta de Disciplina.
 
-### Tipo e capacidades do Ambiente
-
-A classificação do Ambiente deve permitir expressar sua natureza e, quando necessário, os recursos relevantes para uma atividade.
-
-A modelagem ainda não determina se isso será representado por:
-
-- tipo de Ambiente;
-- capacidades/recursos;
-- ou combinação dos dois.
-
-O requisito de domínio é que Gestão de Horários possa verificar se um Ambiente atende às necessidades de uma Oferta de Disciplina.
-
-Exemplo conceitual:
-
-```text
-Oferta de Disciplina
-  exige: laboratório de informática
-
-Ambiente 12
-  atende: laboratório de informática
-```
-
-### Capacidade física
-
-Um Ambiente pode possuir capacidade de ocupação quando essa informação for relevante para o planejamento.
-
-A capacidade é propriedade do Ambiente, enquanto a regra sobre como utilizá-la pertence ao domínio consumidor.
+Um Ambiente pode possuir capacidade de ocupação quando relevante.
 
 ### Invariantes
 
 - um Ambiente pertence a exatamente um Site;
 - Ambiente e Site pertencem à mesma Empresa;
-- um Ambiente inativo não deve ser usado em novas alocações;
-- históricos devem continuar identificando o Ambiente utilizado.
+- Ambiente inativo não recebe novas alocações;
+- históricos continuam identificando o Ambiente utilizado.
 
 ---
 
@@ -131,15 +78,16 @@ A capacidade é propriedade do Ambiente, enquanto a regra sobre como utilizá-la
 
 ### DEC-FT-003 — Deslocamento é uma relação estrutural direcional
 
-Uma relação de deslocamento representa o tempo necessário para ir de um Site de origem a um Site de destino.
+A relação registra o tempo concreto necessário para ir de um Site de origem a um Site de destino.
+
+O dado estrutural deve expressar explicitamente o tempo, por exemplo em minutos:
 
 ```text
-Site A ── 35 min ──> Site B
+Site A → Site B
+tempo de deslocamento = 35 min
 ```
 
-A relação é conceitualmente direcional porque o tempo pode não ser idêntico no sentido contrário.
-
-Portanto:
+A relação é direcional:
 
 ```text
 A → B
@@ -147,18 +95,12 @@ A → B
 B → A
 ```
 
-Se a instituição considerar os tempos iguais, poderá registrar valores equivalentes para os dois sentidos.
+Se a instituição considerar os tempos equivalentes, pode registrar o mesmo valor nos dois sentidos.
 
-### Responsabilidade
-
-O tempo concreto entre dois Sites é dado estrutural.
-
-Uma margem adicional aplicada pela instituição é política e pertence a Parâmetros.
-
-Exemplo:
+### Dado estrutural x política
 
 ```text
-Dado estrutural:
+Deslocamento estrutural:
 A → B = 35 min
 
 Parâmetro:
@@ -168,28 +110,48 @@ Gestão de Horários:
 tempo considerado = 45 min
 ```
 
+O tempo concreto pertence ao domínio estrutural. A margem adicional pertence a Parâmetros.
+
 ### Invariantes
 
-- origem e destino devem pertencer à mesma Empresa;
-- origem e destino devem ser Sites diferentes;
+- origem e destino pertencem à mesma Empresa;
+- origem e destino são Sites diferentes;
 - o tempo de deslocamento não pode ser negativo;
-- ausência de uma relação não deve ser interpretada automaticamente como deslocamento de zero minutos.
+- ausência de relação não significa automaticamente zero minutos.
 
 ---
 
 ## 6. Período Letivo
 
-### DEC-FT-004 — Período Letivo representa vigência acadêmica, não faixa do dia
+### DEC-FT-004 — Período Letivo possui início e fim concretos
 
-Período Letivo delimita uma vigência acadêmica concreta.
+Período Letivo representa uma vigência acadêmica.
 
 Exemplos:
 
 - 1º semestre de 2027;
-- ano letivo de 2027;
-- outra vigência adotada pela Empresa.
+- ano letivo de 2027.
 
-Ele organiza referências e processos que precisam de contexto temporal acadêmico, como:
+Conceitualmente deve possuir:
+
+- data de início;
+- data de término;
+- identidade própria dentro da Empresa.
+
+Sua duração é derivada dessas datas, e não armazenada como uma política genérica.
+
+```text
+Período Letivo
+início = 03/02/2027
+fim    = 02/07/2027
+
+Duração
+→ consequência da vigência definida
+```
+
+Uma Empresa pode adotar semestres, anos ou outros ciclos sem alterar o conceito.
+
+Período Letivo organiza referências e processos como:
 
 - Turmas;
 - Ofertas de Disciplina;
@@ -200,10 +162,10 @@ Período Letivo não significa manhã, tarde ou noite.
 
 ### Invariantes
 
-- um Período Letivo pertence a uma Empresa;
-- deve possuir uma vigência temporal identificável;
-- Turmas e processos associados devem pertencer à mesma Empresa;
-- históricos de um Período Letivo encerrado permanecem identificáveis.
+- pertence a uma Empresa;
+- data de término deve ser posterior à data de início;
+- Turmas e processos associados pertencem à mesma Empresa;
+- históricos de um Período encerrado permanecem identificáveis.
 
 ---
 
@@ -218,88 +180,134 @@ Exemplos:
 - manhã;
 - tarde;
 - noite;
-- integral;
-- outro turno definido pela instituição.
+- integral.
 
-Turno não é apenas uma string de apresentação porque pode ser referenciado por Turmas, Blocos de Aula e regras de planejamento.
+Pode ser referenciado por Turmas, Blocos de Aula e regras de planejamento.
 
-```text
-Turno
- └── Blocos de Aula
-```
-
-O vínculo exato entre Turno e Site ainda pode variar entre instituições. A modelagem, portanto, não assume que todo Site obrigatoriamente possui os mesmos horários para um Turno com o mesmo nome.
+O modelo não assume que todo Site possua exatamente os mesmos horários para um Turno com o mesmo nome.
 
 ---
 
 ## 8. Bloco de Aula
 
-### DEC-FT-006 — Bloco de Aula é referência estrutural alocável
+### DEC-FT-006 — Bloco de Aula define a duração real de uma aula alocável
 
 Bloco de Aula representa uma unidade concreta de tempo em que uma aula pode ser alocada.
 
-Deve possuir, conceitualmente:
+Deve possuir:
 
 - horário de início;
 - horário de término;
 - posição ou ordem dentro do Turno;
-- contexto temporal suficiente para não ser ambíguo.
+- contexto suficiente para não ser ambíguo.
 
 Exemplo:
 
 ```text
-Turno: Manhã
-
 Bloco 1 — 07:00–07:50
-Bloco 2 — 07:50–08:40
-Bloco 3 — 09:00–09:50
 ```
 
-O intervalo entre 08:40 e 09:00 não precisa ser tratado como Bloco de Aula porque não é uma faixa alocável.
+A duração real do Bloco é derivada desses horários:
+
+```text
+07:00–07:50
+→ 50 minutos
+```
+
+Portanto, o tempo de uma aula não precisa ser um número global fixo.
+
+Uma Empresa pode possuir Blocos de durações diferentes quando necessário.
+
+Se existir uma `duração padrão de aula`, ela pode ser um Parâmetro utilizado para auxiliar criação ou validação dos Blocos, mas não substitui os horários reais do Bloco.
 
 ### Escopo dos Blocos
 
-Um Bloco de Aula não deve ser considerado global para todas as Empresas ou todos os Sites por padrão.
+Um Bloco não é global para todas as Empresas ou Sites por padrão.
 
-Sua definição deve estar contextualizada por uma organização temporal da Empresa e, quando necessário, pelo Site ao qual aquela grade de blocos se aplica.
-
-A implementação exata desse escopo permanece aberta.
+Sua definição pertence a uma organização temporal da Empresa e pode, quando necessário, variar por Site.
 
 ### Invariantes
 
-- horário de término deve ser posterior ao horário de início;
-- blocos utilizados em um mesmo contexto não devem possuir sobreposição inválida;
-- um bloco inativo não recebe novas alocações;
-- Disponibilidade e Gestão de Horários devem referenciar a mesma identidade de Bloco quando estiverem falando da mesma faixa alocável.
+- término posterior ao início;
+- blocos do mesmo contexto não possuem sobreposição inválida;
+- bloco inativo não recebe novas alocações;
+- Disponibilidade e Gestão de Horários usam a mesma identidade de Bloco para a mesma faixa alocável.
 
 ---
 
-## 9. Relações com Turma
+## 9. Intervalo
 
-Uma Turma pode possuir referências que restringem sua operação normal, como:
+### DEC-FT-007 — Intervalo real e Interstício mínimo são conceitos diferentes
+
+`Intervalo` representa uma faixa concreta e não alocável dentro da organização temporal da instituição.
+
+Exemplo:
+
+```text
+Bloco 2    07:50–08:40
+Intervalo  08:40–09:00
+Bloco 3    09:00–09:50
+```
+
+Esse Intervalo existe na estrutura temporal real.
+
+Já `Interstício mínimo` representa uma política que exige separação mínima entre determinadas atividades e pertence a Parâmetros.
+
+```text
+Intervalo
+→ fato estrutural da grade temporal
+
+Interstício mínimo
+→ política institucional/contratual
+```
+
+Um Intervalo concreto pode satisfazer um Interstício, mas os conceitos não são equivalentes.
+
+---
+
+## 10. Interstício e deslocamento
+
+O planejamento deve considerar separadamente:
+
+- duração real dos Blocos;
+- Intervalos existentes;
+- tempo de Deslocamento entre Sites;
+- margem de deslocamento definida em Parâmetros;
+- Interstício mínimo exigido por política.
+
+Exemplo conceitual:
+
+```text
+Professor termina aula no Site A às 10:00
+próxima aula no Site B começa às 10:40
+
+Deslocamento A → B = 30 min
+Margem = 5 min
+
+Tempo necessário = 35 min
+Tempo disponível  = 40 min
+→ deslocamento possível
+```
+
+Se houver também um Interstício mínimo aplicável, Gestão de Horários deverá validar a política correspondente sem confundi-la com o próprio tempo de deslocamento.
+
+---
+
+## 11. Relações com Turma
+
+Uma Turma pode possuir:
 
 - Período Letivo;
 - Site de referência;
 - Turno.
 
-Conceitualmente:
-
-```text
-Turma
-├── Período Letivo
-├── Site de referência
-└── Turno
-```
-
-Esses vínculos representam contexto da Turma, não uma alocação de aula.
-
-Uma aula concreta pode utilizar um Ambiente específico dentro do Site e um Bloco de Aula específico durante a montagem da Grade.
+Esses vínculos descrevem contexto da Turma, não uma aula já alocada.
 
 ---
 
-## 10. Relação com Disponibilidade
+## 12. Relação com Disponibilidade
 
-Disponibilidade consome principalmente a estrutura temporal.
+Disponibilidade consome principalmente a estrutura temporal:
 
 ```text
 Professor
@@ -309,20 +317,18 @@ Disponibilidade
 Bloco de Aula
 ```
 
-Quando a instituição exigir granularidade por Site, o Site também pode compor o contexto da disponibilidade.
-
-Essa necessidade deve ser confirmada pelos requisitos do módulo Disponibilidade.
+Quando necessário, Site também pode compor o contexto da disponibilidade.
 
 ---
 
-## 11. Relação com Gestão de Horários
+## 13. Relação com Gestão de Horários
 
-Gestão de Horários combina os eixos acadêmico, físico e temporal.
+Gestão de Horários combina:
 
 ```text
 Oferta de Disciplina
         +
-Professor / Disponibilidade
+Professor(es) / Disponibilidade
         +
 Turma
         +
@@ -332,16 +338,18 @@ Ambiente
         +
 Deslocamento entre Sites
         +
-Parâmetros
+Intervalos
+        +
+Parâmetros / Interstício
         ↓
 Grade de Horários
 ```
 
-Gestão de Horários não deve duplicar essas referências em seu próprio domínio.
+Gestão de Horários não duplica essas referências em seu domínio.
 
 ---
 
-## 12. Cardinalidades conceituais iniciais
+## 14. Cardinalidades conceituais iniciais
 
 ```text
 Empresa          1 ← 0..* Site
@@ -350,47 +358,52 @@ Site             0..* ↔ 0..* Site (Deslocamento direcional)
 Empresa          1 ← 0..* Período Letivo
 Empresa          1 ← 0..* Turno
 Turno            1 ← 0..* Bloco de Aula
+Turno            1 ← 0..* Intervalo
 Período Letivo   1 ← 0..* Turma
 Site             0..1 ← 0..* Turma
 Turno            0..1 ← 0..* Turma
 ```
 
-A cardinalidade de Site e Turno em Turma pode ser refinada conforme os casos reais da instituição.
-
 ---
 
-## 13. Questões em aberto
+## 15. Questões em aberto
 
 ### QFT-001 — Escopo de Turno e Bloco
 
-A mesma definição de Turno e seus Blocos pode ser compartilhada entre Sites ou cada Site precisa possuir sua própria organização temporal?
+A mesma definição de Turno e seus Blocos pode ser compartilhada entre Sites ou cada Site precisa de organização temporal própria?
 
 ### QFT-002 — Recursos de Ambiente
 
-É suficiente classificar Ambientes por tipo ou precisamos representar capacidades/recursos de forma independente?
+É suficiente classificar Ambientes por tipo ou precisamos representar capacidades/recursos independentemente?
 
 ### QFT-003 — Capacidade de Ambiente
 
-A quantidade de alunos da Turma deve bloquear alocação em Ambiente com capacidade insuficiente ou essa regra pode admitir exceções configuráveis?
+Turma maior que a capacidade do Ambiente bloqueia a alocação ou pode haver exceção configurável?
 
 ### QFT-004 — Disponibilidade por Site
 
-A disponibilidade do Professor precisa distinguir o Site em que ele pode estar em determinado Bloco ou o Site é consequência apenas das aulas atribuídas?
+A Disponibilidade do Professor precisa distinguir o Site em determinado Bloco?
 
 ### QFT-005 — Turnos compostos
 
-Como representar instituições em que uma Turma opera em mais de um Turno, como período integral?
+Como representar Turmas que operam em mais de um Turno?
+
+### QFT-006 — Escopo do Interstício
+
+Em quais situações o Interstício mínimo se aplica: entre aulas, turnos, jornadas ou regras contratuais específicas?
 
 ---
 
-## 14. Decisões consolidadas nesta etapa
+## 16. Decisões consolidadas
 
 - `Site` é a referência de unidade física;
 - `Ambiente` é a referência física alocável;
-- Sala comum e Laboratório são classificações/capacidades de Ambiente, não entidades paralelas;
-- Deslocamento entre Sites é dado estrutural e direcional;
+- Sala e Laboratório são classificações/capacidades de Ambiente;
+- Deslocamento entre Sites possui tempo concreto e é direcional;
 - margem geral de deslocamento pertence a Parâmetros;
-- Período Letivo representa vigência acadêmica;
+- Período Letivo possui início e fim e sua duração é derivada;
 - Turno representa organização temporal recorrente;
-- Bloco de Aula representa faixa concreta alocável;
+- Bloco de Aula possui início e fim e sua duração é derivada;
+- Intervalo é uma faixa real não alocável;
+- Interstício mínimo é política em Parâmetros;
 - Gestão de Horários consome essas referências sem assumir ownership sobre elas.
