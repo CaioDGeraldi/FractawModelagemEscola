@@ -8,7 +8,7 @@ A geração automática é uma responsabilidade central do módulo, mas não rep
 
 ## 2. Problema
 
-A elaboração de horários escolares exige conciliar professores, turmas, disciplinas, carga horária, ambientes, tempos de aula, deslocamentos e diferentes restrições de disponibilidade e alocação.
+A elaboração de horários escolares exige conciliar Professores, Turmas, Disciplinas, carga horária, Ambientes, Blocos de Aula, deslocamentos e diferentes restrições de disponibilidade e alocação.
 
 Quando o planejamento é feito manualmente ou com informações dispersas, conflitos podem passar despercebidos e alterações podem gerar novos problemas em outras partes da grade.
 
@@ -18,19 +18,52 @@ O problema central é construir e manter uma grade válida sem perder o controle
 
 Permitir o planejamento, a geração, a revisão e a remontagem de grades de horários escolares, considerando referências estruturais, políticas institucionais e informações de disponibilidade.
 
-## 4. Objetivos específicos
+## 4. Modularidade e autoridade
+
+Gestão de Horários deve respeitar o contrato vigente do FractawModules:
+
+```text
+aplicável ao TipoEmpresa Escola
+≠ habilitado para determinada Empresa
+≠ concedido a determinado MEMBRO
+```
+
+Ser aplicável ao TipoEmpresa Escola ou existir no código não habilita o módulo automaticamente para uma Empresa.
+
+Depois dos gates de vínculo ativo, aplicabilidade e habilitação, o contrato atual de autoridade modular é:
+
+```text
+PROPRIETARIO
+→ ADMINISTRADOR no módulo
+
+ADMINISTRADOR_GERAL
+→ ADMINISTRADOR no módulo
+
+MEMBRO
+→ depende de concessão modular
+   ├── USUARIO
+   └── ADMINISTRADOR
+```
+
+Cargo não concede essa autoridade.
+
+Um usuário com Cargo Diretor ou Coordenador, por exemplo, somente obtém autoridade como Membro quando existir a concessão modular necessária. Se o mesmo vínculo for Proprietário ou Administrador Geral, aplica-se a autoridade modular derivada desses papéis.
+
+A modelagem ainda não define permissões funcionais granulares dentro de Gestão de Horários.
+
+## 5. Objetivos específicos
 
 ### OBJ-GH-001
 
-Considerar conjuntamente professores, turmas, disciplinas, horários, ambientes e demais elementos relevantes.
+Considerar conjuntamente Professores, Turmas, Disciplinas, horários, Ambientes e demais elementos relevantes.
 
 ### OBJ-GH-002
 
-Reduzir conflitos de alocação entre professores, turmas, horários e espaços físicos.
+Reduzir conflitos de alocação entre Professores, Turmas, horários e espaços físicos.
 
 ### OBJ-GH-003
 
-Considerar restrições de disponibilidade, infraestrutura, deslocamento, interstício e demais regras institucionais.
+Considerar restrições de disponibilidade, infraestrutura, deslocamento, Interstício e demais regras institucionais.
 
 ### OBJ-GH-004
 
@@ -56,7 +89,7 @@ Quando necessário, concluir com uma grade parcial acompanhada das situações q
 
 Permitir aulas com um ou mais Professores quando a Oferta e as regras acadêmicas exigirem co-docência.
 
-## 5. Entradas conceituais
+## 6. Entradas conceituais
 
 Gestão de Horários pode consumir:
 
@@ -64,48 +97,57 @@ Gestão de Horários pode consumir:
 - Oferta de Disciplina;
 - Professores habilitados e/ou atribuídos;
 - políticas vigentes fornecidas por Parâmetros;
-- disponibilidade docente;
-- Blocos de Aula e Intervalos;
+- disponibilidade docente proveniente de fonte compatível;
+- Blocos de Aula concretos e demais elementos da organização temporal;
 - Ambientes e recursos;
-- tempos de Deslocamento entre Sites;
+- relações estruturais de Deslocamento entre Sites e seus tempos específicos;
 - Período Letivo;
 - demais demandas necessárias ao planejamento.
 
 Consumir uma informação não transfere sua propriedade para Gestão de Horários.
 
-## 6. Disponibilidade
+## 7. Disponibilidade
 
-Quando o módulo Disponibilidade estiver disponível, Gestão de Horários deve poder consumir seus dados.
+Quando o módulo Disponibilidade estiver efetivamente habilitado e disponível no contexto da Empresa, Gestão de Horários deve poder consumir seus dados por contrato compatível.
 
-Na ausência dele, a gestão da grade deve continuar utilizável a partir de outra fonte compatível de disponibilidade.
+Na ausência desse módulo, a gestão da grade deve continuar utilizável a partir de outra fonte compatível de disponibilidade.
 
-## 7. Políticas e restrições temporais
+Portanto, não existe dependência obrigatória:
+
+```text
+Gestão de Horários → Disponibilidade
+```
+
+A integração é uma possibilidade, não requisito de existência do módulo.
+
+## 8. Políticas e restrições
 
 Gestão de Horários aplica políticas institucionais, mas não é proprietária das políticas compartilhadas.
 
-Entre elas podem estar:
+Entre os candidatos já identificados estão:
 
 - interpretação de prioridade de ausência;
 - prioridade mínima bloqueante;
+- duração padrão de aula;
 - máximo de aulas consecutivas;
-- Interstício mínimo;
-- margem de deslocamento;
-- outros limites institucionais.
+- Interstício institucional;
+- margem geral de deslocamento;
+- outros limites confirmados pelos requisitos.
 
-O módulo deve distinguir os dados estruturais das políticas.
+O módulo deve distinguir política/default de referência ou ocorrência concreta.
 
 Exemplo:
 
 ```text
-Bloco real:            07:00–07:50
-Deslocamento A → B:    35 min
-Margem configurada:    10 min
-Interstício aplicável: conforme política
+Bloco concreto:                 07:00–07:50
+Deslocamento estrutural A → B:  35 min
+Margem geral de deslocamento:   10 min
+Interstício aplicável:          conforme política
 ```
 
-A duração real da aula é determinada pelo Bloco alocado, não por uma constante interna do módulo.
+A duração real da aula alocada decorre do Bloco concreto, ainda que uma duração padrão possa orientar a organização temporal.
 
-## 8. Co-docência
+## 9. Co-docência
 
 Uma alocação pode possuir mais de um Professor.
 
@@ -114,12 +156,34 @@ Quando isso ocorrer, todos os Professores participantes devem simultaneamente sa
 - disponibilidade;
 - habilitação ou vínculo acadêmico aplicável;
 - ausência de conflito com outra alocação;
-- deslocamento entre Sites;
+- restrições de deslocamento entre Sites;
 - Interstício e demais políticas aplicáveis.
 
 A existência de dois Professores atribuídos à Oferta não obriga que todas as aulas utilizem os dois, salvo quando os requisitos da Oferta determinarem isso.
 
-## 9. Exceções
+## 10. Operações e permissões funcionais
+
+Gestão de Horários pode vir a possuir operações funcionalmente distintas, como:
+
+- gerar grade;
+- revisar resultado;
+- tratar exceções;
+- remontar grade;
+- publicar uma versão, caso publicação seja confirmada;
+- outras operações futuras.
+
+A necessidade dessa granularidade é real para a modelagem, mas o FractawModules ainda não definiu um catálogo ou schema de permissões granulares.
+
+Portanto, permanece em aberto:
+
+- quais operações exigirão permissão funcional própria;
+- se autoridade modular `USUARIO` será suficiente para alguma delas;
+- quais operações exigirão `ADMINISTRADOR`;
+- se Proprietário e Administrador Geral, por possuírem `ADMINISTRADOR` derivado, receberão automaticamente todas as futuras operações funcionais ou apenas autoridade administrativa suficiente para gerenciá-las.
+
+Este documento não antecipa essa decisão.
+
+## 11. Exceções
 
 Quando uma situação impedir uma alocação e não houver solução automática possível, deve ser registrada uma exceção de planejamento.
 
@@ -131,13 +195,13 @@ O processo continua para as demais alocações possíveis e apresenta ao respons
 - o motivo do impedimento;
 - o contexto necessário para intervenção humana.
 
-## 10. Intervenção humana
+## 12. Intervenção humana
 
-Negociação com professores, alteração de disponibilidade ou outra decisão externa não deve ser mascarada como solução automática.
+Negociação com Professores, alteração de disponibilidade ou outra decisão externa não deve ser mascarada como solução automática.
 
 Após a mudança das condições, uma nova geração ou remontagem pode ocorrer.
 
-## 11. Ownership
+## 13. Ownership
 
 Pertencem a Gestão de Horários, quando confirmados pela modelagem:
 
@@ -152,11 +216,13 @@ Pertencem a Gestão de Horários, quando confirmados pela modelagem:
 Não pertencem ao módulo:
 
 - Professor, Turma, Disciplina e demais referências estruturais;
+- Cargo e identidade de acesso;
+- autoridade modular e concessões da plataforma;
 - política institucional de prioridades, Interstício ou margem;
 - disponibilidade docente original;
-- Blocos, Sites, Ambientes e Deslocamentos estruturais.
+- Blocos, Sites, Ambientes e relações de Deslocamento estruturais.
 
-## 12. Questões em aberto
+## 14. Questões em aberto
 
 ### QGH-001 — Remontagem
 
@@ -177,3 +243,11 @@ Quais estados formais uma tentativa de geração pode assumir e como distinguir 
 ### QGH-005 — Co-docência
 
 Como a Oferta determina se todos os Professores atribuídos devem participar juntos ou se a participação pode variar entre as aulas?
+
+### QGH-006 — Permissões granulares
+
+Quais operações precisarão de permissão funcional própria além da autoridade modular mínima vigente?
+
+### QGH-007 — Autoridade administrativa e operação concreta
+
+Como futuras permissões funcionais se relacionarão com a autoridade modular `ADMINISTRADOR` de Membros e com a autoridade derivada de Proprietário e Administrador Geral?
