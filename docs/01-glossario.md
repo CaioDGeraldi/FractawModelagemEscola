@@ -106,11 +106,21 @@ Não significa que ele esteja atribuído a uma Turma específica.
 
 Relação entre Professor e Oferta de Disciplina que indica responsabilidade por uma oferta concreta.
 
-O momento em que essa atribuição é definida ainda depende dos requisitos de Gestão de Horários.
+Uma Oferta pode possuir mais de um Professor atribuído.
+
+### Co-docência
+
+Situação em que uma mesma aula/alocação possui mais de um Professor simultaneamente.
+
+A co-docência é opcional: a regra geral continua permitindo uma aula com apenas um Professor.
+
+Professores atribuídos a uma Oferta não precisam necessariamente participar juntos de todas as aulas dessa Oferta.
 
 ### Período Letivo
 
 Referência estrutural que delimita uma vigência acadêmica, como semestre ou ano letivo.
+
+Possui início e término concretos; sua duração é consequência dessas datas.
 
 Não deve ser confundido com Turno ou Bloco de Aula.
 
@@ -132,7 +142,7 @@ Sala comum, laboratório, auditório, quadra e oficina são exemplos de classifi
 
 Classificação ou conjunto de capacidades de um Ambiente preparado para atividades específicas.
 
-Não é tratado, nesta modelagem, como entidade estrutural paralela a Ambiente.
+Não é tratado como entidade estrutural paralela a Ambiente.
 
 ### Deslocamento entre Sites
 
@@ -144,15 +154,25 @@ Uma margem institucional adicional de deslocamento é política e pertence a Par
 
 Referência temporal organizacional, como manhã, tarde ou noite.
 
-Pode ser utilizada por Turmas e para organizar Blocos de Aula.
+Pode ser utilizada por Turmas e para organizar Blocos de Aula e Intervalos.
 
 ### Bloco de Aula
 
 Faixa concreta e alocável de tempo utilizada por Disponibilidade e Gestão de Horários.
 
-Possui horário de início, horário de término e contexto suficiente para identificar sua posição na organização temporal da Escola.
+Possui horário de início e término. Sua duração real é derivada desses horários.
 
-Intervalos não alocáveis não precisam ser representados como Blocos de Aula.
+### Intervalo
+
+Faixa concreta e não alocável dentro da organização temporal, como recreio ou pausa entre Blocos.
+
+Intervalo é parte da estrutura temporal real da instituição.
+
+### Interstício
+
+Tempo mínimo livre exigido por política entre determinadas atividades.
+
+Interstício não é sinônimo de Intervalo: um Intervalo pode satisfazer um Interstício, mas o primeiro é dado estrutural e o segundo é política/configuração.
 
 ### Disponibilidade
 
@@ -178,7 +198,7 @@ Módulo funcional responsável pelo planejamento, geração, revisão, exceçõe
 
 ### Grade de Horários
 
-Resultado estruturado da alocação de aulas em professores, turmas, Blocos de Aula e Ambientes.
+Resultado estruturado da alocação de aulas em Professores, Turmas, Blocos de Aula e Ambientes.
 
 ### Exceção de planejamento
 
@@ -186,23 +206,17 @@ Situação identificada durante o planejamento que impede ou compromete uma aloc
 
 ## Regra terminológica
 
-Os seguintes conceitos devem permanecer distintos:
-
 ```text
 papel empresarial
 ≠ função escolar
 ≠ autorização funcional
 ```
 
-Da mesma forma:
-
 ```text
 Professor
 ≠ Usuario
 ≠ EmpresaUsuario
 ```
-
-No modelo acadêmico:
 
 ```text
 Matriz Curricular
@@ -212,12 +226,14 @@ Habilitação docente
 ≠ Atribuição docente
 ```
 
-E no modelo temporal:
-
 ```text
 Período Letivo
 ≠ Turno
 ≠ Bloco de Aula
+≠ Intervalo
+
+Intervalo
+≠ Interstício
 ```
 
 Os conceitos podem estar relacionados, mas não representam a mesma responsabilidade de domínio.
