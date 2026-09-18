@@ -22,12 +22,13 @@ O documento `docs/contexto-fractaw.md` registra essas fronteiras.
 
 ## Escopo da modelagem
 
-A modelagem do Tipo de Empresa Escola é organizada em quatro áreas:
+A modelagem do Tipo de Empresa Escola é organizada em áreas complementares:
 
 ```text
 Escola
 ├── referências estruturais
 ├── modelo acadêmico
+├── modelo físico e temporal
 ├── parâmetros aplicáveis
 └── módulos
     ├── Disponibilidade
@@ -47,6 +48,7 @@ docs/
 ├── 03-referencias-estruturais.md
 ├── 04-parametros.md
 ├── 05-modelo-academico.md
+├── 06-modelo-fisico-temporal.md
 │
 └── modulos/
     ├── disponibilidade/
@@ -83,5 +85,12 @@ A base acadêmica já distingue:
 - Curso e Disciplina;
 - Matriz Curricular e Oferta de Disciplina;
 - Habilitação docente e Atribuição docente.
+
+A base física e temporal já distingue:
+
+- Site e Ambiente;
+- classificação/capacidades de Ambiente em vez de entidades paralelas para Sala e Laboratório;
+- Deslocamento estrutural entre Sites e margem institucional de deslocamento;
+- Período Letivo, Turno e Bloco de Aula.
 
 A geração automática da grade é uma responsabilidade de Gestão de Horários, não o nome do módulo como um todo.
