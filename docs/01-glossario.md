@@ -62,23 +62,51 @@ Ser Diretor não implica ser `PROPRIETARIO` ou `ADMINISTRADOR_GERAL`.
 
 Referência estrutural que representa um docente no domínio Escola.
 
-Pode estar associado a disciplinas, turmas, disponibilidade e grades.
+Pode estar associado a disciplinas, disponibilidade, ofertas de disciplina e grades.
 
 Quando um Professor utiliza o sistema, sua referência escolar deve poder ser relacionada à identidade de acesso correspondente sem que os dois conceitos se tornem a mesma coisa.
 
 ### Curso
 
-Referência estrutural que representa uma formação ou organização acadêmica à qual turmas e componentes curriculares podem estar relacionados.
+Referência estrutural que representa uma formação ou organização acadêmica.
 
-Sua necessidade e granularidade definitiva devem ser confirmadas pelos requisitos.
+Pode possuir uma Matriz Curricular e organizar Turmas quando esse conceito fizer parte do modelo acadêmico da instituição.
 
 ### Disciplina
 
-Referência estrutural que representa um componente curricular que pode possuir carga horária, requisitos de ambiente e relações com professores e turmas.
+Referência estrutural que representa um componente curricular com identidade própria.
+
+Uma mesma Disciplina pode participar de diferentes Cursos e diferentes Ofertas de Disciplina.
+
+### Matriz Curricular
+
+Relação acadêmica que descreve quais Disciplinas fazem parte de um Curso e quais regras curriculares se aplicam nessa relação.
+
+Pode conter carga horária prevista, etapa, módulo ou outras informações curriculares confirmadas pelos requisitos.
 
 ### Turma
 
-Referência estrutural que representa um grupo acadêmico para o qual aulas e disciplinas são planejadas dentro de determinado contexto letivo.
+Referência estrutural que representa um grupo acadêmico concreto dentro de determinado Período Letivo.
+
+Pode estar associada a um Curso quando a instituição utilizar esse conceito.
+
+### Oferta de Disciplina
+
+Relação que representa uma Disciplina que uma Turma precisa receber em determinado contexto letivo.
+
+É uma entrada acadêmica para o planejamento de horários e não representa uma aula já alocada na grade.
+
+### Habilitação docente
+
+Relação entre Professor e Disciplina que indica que o Professor pode lecionar aquela Disciplina.
+
+Não significa que ele esteja atribuído a uma Turma específica.
+
+### Atribuição docente
+
+Relação entre Professor e Oferta de Disciplina que indica responsabilidade por uma oferta concreta.
+
+O momento em que essa atribuição é definida ainda depende dos requisitos de Gestão de Horários.
 
 ### Período Letivo
 
@@ -156,6 +184,16 @@ Da mesma forma:
 Professor
 ≠ Usuario
 ≠ EmpresaUsuario
+```
+
+E no modelo acadêmico:
+
+```text
+Matriz Curricular
+≠ Oferta de Disciplina
+
+Habilitação docente
+≠ Atribuição docente
 ```
 
 Os conceitos podem estar relacionados, mas não representam a mesma responsabilidade de domínio.
