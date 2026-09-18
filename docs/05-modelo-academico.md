@@ -86,9 +86,32 @@ A Oferta existe antes da montagem da grade e constitui entrada para Gestão de H
 
 Ela não representa uma aula já alocada em determinado dia e Bloco.
 
-## 6. Professor e Disciplina
+## 6. Professor, Cargo e identidade de acesso
 
-### DEC-ACA-004 — Habilitação docente e atribuição docente são conceitos diferentes
+### DEC-ACA-004 — Professor estrutural não é Cargo nem identidade de acesso
+
+Professor representa um docente no domínio acadêmico e existe independentemente de acesso ao Fractaw.
+
+Devem permanecer distintos:
+
+```text
+Professor estrutural
+≠ Cargo Professor
+≠ Usuario
+≠ EmpresaUsuario
+```
+
+`Cargo Professor` classifica a função organizacional de um vínculo empresarial no TipoEmpresa Escola.
+
+A referência estrutural Professor participa do modelo acadêmico, da Disponibilidade e das Grades mesmo quando não existe conta de acesso correspondente.
+
+Quando o docente possui acesso ao sistema, deve ser possível relacionar sua referência Professor ao EmpresaUsuario correspondente sem tornar os conceitos equivalentes.
+
+A forma técnica e a persistência dessa associação permanecem em aberto.
+
+## 7. Professor e Disciplina
+
+### DEC-ACA-005 — Habilitação docente e atribuição docente são conceitos diferentes
 
 ### Habilitação docente
 
@@ -116,9 +139,9 @@ Oferta de Disciplina
 
 A existência de mais de um Professor não significa necessariamente que todos participarão de todas as aulas da Oferta.
 
-## 7. Co-docência
+## 8. Co-docência
 
-### DEC-ACA-005 — Uma aula pode possuir mais de um Professor
+### DEC-ACA-006 — Uma aula pode possuir mais de um Professor
 
 Uma aula efetivamente alocada pode possuir um ou mais Professores simultaneamente.
 
@@ -138,7 +161,7 @@ Quando houver co-docência:
 
 - todos os Professores participantes precisam estar disponíveis no mesmo Bloco;
 - todos ficam ocupados durante a mesma alocação;
-- restrições de deslocamento e interstício se aplicam individualmente a cada Professor;
+- restrições de deslocamento e Interstício se aplicam individualmente a cada Professor;
 - a alocação continua pertencendo à mesma Oferta de Disciplina.
 
 A modelagem distingue, portanto:
@@ -151,7 +174,7 @@ Professores participantes de cada Aula
 
 Isso permite que uma Oferta tenha dois Professores responsáveis, mas apenas determinadas aulas utilizem os dois simultaneamente.
 
-## 8. Professor e Turma
+## 9. Professor e Turma
 
 Não deve existir uma relação direta genérica `Professor → Turma` sem significado específico.
 
@@ -165,7 +188,7 @@ Oferta de Disciplina / Aula
 Turma
 ```
 
-## 9. Relação com Gestão de Horários
+## 10. Relação com Gestão de Horários
 
 Gestão de Horários consome o modelo acadêmico, mas não se torna proprietária dele.
 
@@ -178,14 +201,14 @@ Entradas conceituais relevantes incluem:
 - Período Letivo;
 - Blocos de Aula;
 - Ambientes e recursos;
-- Disponibilidade;
+- disponibilidade proveniente de fonte compatível;
 - políticas fornecidas por Parâmetros.
 
 Gestão de Horários define quais Professores participam de cada alocação quando isso fizer parte do planejamento.
 
 O resultado da geração é operacional e pertence ao módulo.
 
-## 10. Invariantes iniciais
+## 11. Invariantes iniciais
 
 ### INV-ACA-001
 
@@ -219,7 +242,11 @@ Todos os Professores de uma aula em co-docência devem estar simultaneamente apt
 
 A exclusão ou inativação de uma referência não deve tornar históricos acadêmicos ou grades publicadas semanticamente incompreensíveis.
 
-## 11. Cardinalidades conceituais iniciais
+### INV-ACA-009
+
+Cargo Professor, Usuario e EmpresaUsuario não substituem a identidade acadêmica da referência Professor.
+
+## 12. Cardinalidades conceituais iniciais
 
 ```text
 Curso                0..* ↔ 0..* Disciplina
@@ -234,7 +261,9 @@ Aula / Alocação      1..* ↔ 0..* Professor
 
 As cardinalidades podem ser refinadas quando regras institucionais mais específicas forem formalizadas.
 
-## 12. Questões em aberto
+A cardinalidade e a representação da associação `Professor ↔ EmpresaUsuario` não são definidas neste documento.
+
+## 13. Questões em aberto
 
 ### QA-ACA-001 — Matriz Curricular
 
@@ -255,3 +284,7 @@ Quando uma Oferta possui vários Professores atribuídos, como é determinado qu
 ### QA-ACA-005 — Turma sem Curso
 
 Quais cenários escolares exigem Turmas sem vínculo com Curso e quais regras mudam nesses casos?
+
+### QA-ACA-006 — Associação Professor e EmpresaUsuario
+
+Qual é a forma adequada de relacionar a referência Professor ao vínculo empresarial de acesso sem duplicar identidade ou acoplar o domínio acadêmico à autenticação?
