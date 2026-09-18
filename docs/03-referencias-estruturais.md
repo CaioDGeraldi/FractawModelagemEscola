@@ -24,12 +24,13 @@ Ser configurável não transforma automaticamente um conceito em Parâmetro.
 
 Representa um docente da Empresa Escola.
 
-Relações conceituais já identificadas:
+Pode:
 
-- pode estar habilitado a lecionar uma ou mais Disciplinas;
-- pode possuir Disponibilidade;
-- pode aparecer em alocações de uma Grade de Horários;
-- pode possuir vínculo com uma identidade de acesso à plataforma.
+- possuir Habilitações docentes;
+- possuir Disponibilidade;
+- receber Atribuições docentes;
+- aparecer em alocações de uma Grade de Horários;
+- possuir vínculo com uma identidade de acesso à plataforma.
 
 Professor existe como conceito escolar independentemente de possuir usuário no sistema.
 
@@ -37,40 +38,36 @@ Professor existe como conceito escolar independentemente de possuir usuário no 
 
 ### REF-002 — Curso
 
-Representa uma organização ou formação acadêmica utilizada para estruturar a oferta escolar.
+Representa uma formação ou organização acadêmica.
 
-Pode organizar Turmas e Disciplinas conforme o modelo acadêmico adotado pela Empresa.
+Pode possuir uma Matriz Curricular e organizar Turmas quando o modelo acadêmico da instituição utilizar Curso.
 
-A obrigatoriedade e a granularidade de Curso ainda devem ser confirmadas.
+Curso não é obrigatório para representar toda forma possível de Turma escolar.
 
 ### REF-003 — Disciplina
 
-Representa um componente curricular.
+Representa um componente curricular com identidade própria.
 
-Pode possuir:
+A mesma Disciplina pode participar de diferentes Cursos e diferentes Ofertas de Disciplina.
 
-- carga horária;
-- relação com Professores;
-- relação com Turmas ou Cursos;
-- requisitos específicos de ambiente ou recurso.
-
-Regras de carga horária e requisitos ainda serão detalhadas.
+Disciplina não deve ser duplicada apenas porque aparece em mais de um Curso.
 
 ### REF-004 — Turma
 
-Representa um grupo acadêmico para o qual aulas são planejadas.
+Representa um grupo acadêmico concreto para o qual atividades são planejadas.
+
+Deve estar relacionada a um Período Letivo.
 
 Pode estar relacionada a:
 
-- Curso;
-- Período Letivo;
-- Site;
-- Disciplinas;
+- Curso, quando aplicável;
+- Site de referência;
+- Ofertas de Disciplina;
 - alocações da Grade de Horários.
 
 ### REF-005 — Período Letivo
 
-Representa a vigência acadêmica utilizada para organizar atividades, turmas, disponibilidade e planejamento.
+Representa a vigência acadêmica utilizada para organizar atividades, Turmas, disponibilidade e planejamento.
 
 Pode corresponder, por exemplo, a semestre ou ano letivo conforme a instituição.
 
@@ -101,12 +98,7 @@ A relação entre Sala e Laboratório permanece em análise.
 
 Representa um ambiente com recursos ou características específicas necessários a determinadas atividades.
 
-Questão em aberto:
-
-- Laboratório é uma especialização de Sala;
-- ou deve permanecer como referência independente?
-
-A modelagem deverá escolher com base nas regras do domínio, não na estrutura de banco de dados.
+Ainda deve ser decidido se Laboratório é uma especialização de Sala ou uma referência independente.
 
 ### REF-009 — Bloco de Aula
 
@@ -119,43 +111,62 @@ Pode possuir:
 - posição dentro de um turno ou jornada;
 - identidade utilizada por Disponibilidade e Gestão de Horários.
 
-Por possuir potencial identidade e ser referenciado por processos diferentes, é tratado inicialmente como referência estrutural.
+Por possuir identidade própria e ser referenciado por processos diferentes, é tratado inicialmente como referência estrutural.
 
-## 4. Relações estruturais candidatas
+## 4. Relações acadêmicas estruturais
 
-Algumas relações também possuem relevância de domínio e podem exigir identidade própria.
+O detalhamento principal destas relações está em `05-modelo-academico.md`.
 
-### Professor ↔ Disciplina
+### Matriz Curricular — Curso ↔ Disciplina
 
-Representa quais Disciplinas um Professor está apto ou designado a lecionar.
+Representa quais Disciplinas fazem parte de um Curso e quais propriedades pertencem a essa relação curricular.
 
-Ainda deve ser definido se existe diferença entre habilitação, preferência e atribuição efetiva.
+Pode registrar, conforme os requisitos:
 
-### Turma ↔ Disciplina
+- carga horária prevista;
+- etapa, módulo ou série;
+- obrigatoriedade;
+- outras regras curriculares.
 
-Representa quais Disciplinas precisam ser ofertadas para uma Turma e em qual carga horária.
+### Oferta de Disciplina — Turma ↔ Disciplina
 
-Essa relação provavelmente será uma entrada importante de Gestão de Horários.
+Representa uma Disciplina que uma Turma precisa receber em determinado contexto letivo.
+
+A Oferta existe antes da montagem da grade e constitui entrada para Gestão de Horários.
+
+Não representa uma aula já alocada.
+
+### Habilitação docente — Professor ↔ Disciplina
+
+Representa que um Professor pode lecionar determinada Disciplina.
+
+Habilitação não significa responsabilidade por uma Turma específica.
+
+### Atribuição docente — Professor ↔ Oferta de Disciplina
+
+Representa que um Professor é responsável por uma Oferta de Disciplina concreta.
+
+O momento em que a atribuição é definida ainda deve ser confirmado pelos requisitos de Gestão de Horários.
 
 ### Deslocamento entre Sites
 
 Uma relação específica entre Site de origem e Site de destino, com tempo de deslocamento aplicável, é candidata a dado estrutural.
 
-Exemplo conceitual:
+Exemplo:
 
 ```text
 Site A → Site B = 35 minutos
 ```
 
-Já uma margem geral adicionada ao deslocamento representa política e é candidata a Parâmetro.
+Uma margem geral adicional de deslocamento, por outro lado, representa política e é candidata a Parâmetro.
 
 ## 5. Conceitos que não são referências estruturais
 
 ### Diretor
 
-Diretor é, inicialmente, uma função/ator escolar e não uma referência estrutural necessária ao planejamento.
+Diretor é uma função/ator escolar e não uma referência estrutural necessária ao planejamento.
 
-Caso futuros requisitos exijam dados próprios de direção com identidade de domínio, essa classificação poderá ser revista.
+Caso futuros requisitos exijam identidade de domínio própria para direção escolar, essa classificação poderá ser revista.
 
 ### Papel empresarial
 
@@ -188,7 +199,7 @@ Professor
 ├── Disponibilidade
 └── Gestão de Horários
 
-Turma
+Oferta de Disciplina
 └── Gestão de Horários
 
 Bloco de Aula
@@ -204,7 +215,7 @@ Referências escolares utilizadas em conjunto devem pertencer à mesma Empresa.
 
 ### INV-REF-002
 
-Uma referência estrutural não deve mudar de domínio proprietário apenas porque um módulo específico a utiliza com maior frequência.
+Uma referência estrutural não muda de domínio proprietário apenas porque um módulo específico a utiliza com maior frequência.
 
 ### INV-REF-003
 
@@ -214,37 +225,43 @@ Dados históricos devem continuar apontando para referências semanticamente ide
 
 Políticas institucionais não devem ser incorporadas artificialmente às referências estruturais quando pertencem à responsabilidade de Parâmetros.
 
+### INV-REF-005
+
+Habilitação docente e Atribuição docente possuem significados distintos.
+
+### INV-REF-006
+
+Matriz Curricular e Oferta de Disciplina possuem significados distintos.
+
 ## 9. Questões em aberto
 
-### QR-001 — Curso
-
-Toda Turma necessariamente pertence a um Curso?
-
-### QR-002 — Sala e Laboratório
+### QR-001 — Sala e Laboratório
 
 Laboratório é uma especialização de Sala ou conceito independente?
 
-### QR-003 — Bloco de Aula
+### QR-002 — Bloco de Aula
 
 Blocos são definidos globalmente para a Empresa, por Site, por turno ou por outro contexto?
 
-### QR-004 — Professor e Disciplina
+### QR-003 — Atribuição docente
 
-A relação representa habilitação, atribuição, preferência ou mais de um desses conceitos?
+O Professor responsável por uma Oferta de Disciplina deve estar definido antes da geração da grade ou pode ser decidido durante o planejamento?
 
-### QR-005 — Deslocamento
+### QR-004 — Deslocamento
 
 A relação de deslocamento é direcional e pode possuir tempos diferentes entre A → B e B → A?
 
+### QR-005 — Matriz Curricular
+
+Como vigência e versionamento da Matriz Curricular devem ser representados conceitualmente?
+
 ## 10. Próximas definições
 
-Para cada referência confirmada, a modelagem deverá aprofundar:
+A modelagem deverá aprofundar:
 
-- identidade;
-- relações;
-- cardinalidades conceituais;
-- invariantes;
-- ciclo de vida;
-- consumidores;
-- regras que pertencem à própria referência;
-- regras que pertencem a Parâmetros ou módulos.
+- Sala, Laboratório e recursos de ambiente;
+- Bloco de Aula e organização temporal;
+- Sites e deslocamento;
+- regras de vigência acadêmica;
+- atribuição docente;
+- cardinalidades e ciclo de vida das relações acadêmicas.
