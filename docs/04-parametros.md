@@ -14,47 +14,80 @@ Parâmetros responde principalmente:
 
 O Tipo de Empresa Escola define a semântica e a aplicabilidade das políticas.
 
-A Empresa mantém os valores efetivamente vigentes.
+A Empresa mantém os valores efetivamente vigentes e pode defini-los de forma diferente de outras Empresas.
 
-## 3. Critério de pertencimento
+## 3. Princípio de configuração temporal
 
-Um conceito é candidato a Parâmetro quando representa:
+### DEC-PAR-001 — Valores que definem tempo são configuráveis pela Empresa
 
-- política empresarial;
-- limite configurável;
-- regra geral de operação;
-- preferência institucional compartilhada;
-- valor padrão ou tolerância que afeta o comportamento dos módulos.
+Toda regra ou valor que determina duração, intervalo, janela ou tempo considerado pela operação escolar deve ser configurável pela Empresa por meio de Parâmetros.
 
-Não pertencem a Parâmetros apenas por serem configuráveis:
+Isso inclui, conforme aplicável:
 
-- referências estruturais;
-- fatos operacionais;
-- disponibilidade individual;
-- grades;
-- conflitos;
-- tentativas de geração;
-- exceções.
+- duração padrão de aula;
+- duração ou organização dos Blocos de Aula;
+- duração e posição de Intervalos;
+- horários de Turnos;
+- duração ou configuração padrão de Períodos Letivos;
+- interstício mínimo entre atividades;
+- tempos considerados para deslocamento entre Sites;
+- margens de segurança de deslocamento;
+- demais janelas e tolerâncias temporais.
 
-## 4. Parâmetros já identificados
+Uma Empresa não deve ser obrigada a adotar os mesmos valores temporais de outra.
 
-A modelagem de Disponibilidade e Gestão de Horários já identificou como candidatos:
+Quando necessário, a configuração pode possuir escopo mais específico, por exemplo:
+
+- Empresa inteira;
+- Site;
+- Turno;
+- Período Letivo;
+- outro contexto escolar confirmado pelos requisitos.
+
+A forma técnica de representar herança, sobrescrita ou precedência desses valores pertence ao FractawModules.
+
+## 4. Parâmetro x referência concreta
+
+Configurar tempo em Parâmetros não elimina referências estruturais que precisam ser identificadas por outros domínios.
+
+Exemplo:
+
+```text
+Parâmetros
+  duração padrão de aula = 50 min
+  turno manhã = 07:00–12:00
+
+Estrutura temporal concreta
+  Bloco 1 = 07:00–07:50
+  Bloco 2 = 07:50–08:40
+```
+
+O valor temporal é definido/configurável pela Empresa; o Bloco continua possuindo identidade porque Disponibilidade e Gestão de Horários precisam referenciar a mesma faixa concreta.
+
+O mesmo princípio vale para Período Letivo e Deslocamento entre Sites: a Empresa define os valores temporais, enquanto as referências concretas preservam identidade, relacionamento e histórico.
+
+## 5. Parâmetros já identificados
+
+A modelagem já identificou como candidatos:
 
 - política de interpretação da escala de prioridade de ausência;
 - prioridade mínima considerada bloqueante;
 - limites institucionais de alocação;
 - máximo de aulas consecutivas;
-- interstício mínimo entre atividades, quando exigido pela instituição;
-- margens ou tolerâncias gerais de deslocamento;
-- outras políticas compartilhadas que venham a ser confirmadas pelos requisitos.
+- duração padrão de aula;
+- configuração temporal de Turnos e Blocos;
+- configuração de Intervalos;
+- duração/configuração padrão de Período Letivo;
+- interstício mínimo entre atividades;
+- tempos de deslocamento considerados entre Sites;
+- margens ou tolerâncias adicionais de deslocamento;
+- outras políticas compartilhadas confirmadas pelos requisitos.
 
-## 5. Política de prioridade
+## 6. Política de prioridade
 
 A Disponibilidade registra o valor de prioridade atribuído a um período.
 
 Parâmetros define como esse valor deve ser interpretado pela Empresa.
-
-Conceitualmente:
 
 ```text
 Disponibilidade
@@ -72,91 +105,115 @@ A referência atual de modelagem considera:
 - níveis 1 a 8 como negociáveis, com peso crescente;
 - níveis 9 e 10 como bloqueantes.
 
-Essa política permanece sujeita à definição formal dos requisitos da Escola e à configuração permitida por Empresa.
+Essa política permanece configurável conforme as regras permitidas para o Tipo de Empresa Escola.
 
-## 6. Interstício
+## 7. Interstício
 
-### DEC-PAR-001 — Interstício mínimo é uma política
+Interstício representa o tempo mínimo livre exigido entre atividades quando houver regra institucional, contratual ou operacional.
 
-Interstício representa o tempo mínimo livre que deve existir entre duas atividades quando uma regra institucional, contratual ou operacional exigir essa separação.
-
-Exemplo conceitual:
+Exemplo:
 
 ```text
 interstício mínimo entre atividades = 20 minutos
 ```
 
-Ele não deve ser confundido com um intervalo real já existente na grade de blocos.
+Ele não é sinônimo de Intervalo.
 
 ```text
-Intervalo estrutural
-→ 08:40–09:00 realmente existe na organização temporal
+Intervalo
+→ faixa concreta existente na organização temporal
 
-Interstício mínimo
-→ regra que exige determinada separação entre atividades
+Interstício
+→ valor mínimo configurado que uma separação deve satisfazer
 ```
 
-A modelagem ainda deve definir em quais contextos o interstício se aplica, por exemplo:
+## 8. Deslocamento entre Sites
 
-- entre aulas consecutivas;
-- entre turnos;
-- entre jornadas;
-- apenas em determinadas situações contratuais.
-
-## 7. Deslocamento e margem
-
-O tempo concreto de deslocamento entre dois Sites não é Parâmetro: pertence à relação estrutural de Deslocamento entre Sites.
-
-Parâmetros pode definir uma margem adicional de segurança.
+O tempo utilizado para deslocamento entre Sites deve ser definido pela Empresa e pode divergir entre pares de Sites e entre sentidos.
 
 Exemplo:
 
 ```text
-Deslocamento A → B = 35 min
-Margem institucional = 10 min
-Tempo considerado no planejamento = 45 min
+A → B = 35 min
+B → A = 45 min
 ```
 
-Gestão de Horários aplica a política sem assumir ownership do dado estrutural.
+A Empresa também pode definir margem adicional:
 
-## 8. Duração padrão de aula
+```text
+tempo configurado A → B = 35 min
+margem de segurança = 10 min
+tempo considerado = 45 min
+```
 
-A duração real de uma aula alocável é definida pelo Bloco de Aula, por seus horários de início e término.
+A relação `Site origem → Site destino` continua sendo estrutural; os valores temporais associados a ela são configurações da Empresa.
 
-Se a Empresa desejar utilizar uma duração padrão para auxiliar a criação ou validação dos Blocos, esse valor pode ser representado como política/configuração.
+## 9. Duração da aula e Blocos
 
-Portanto:
+A Empresa define sua organização temporal.
+
+Pode existir uma duração padrão de aula, por exemplo:
+
+```text
+duração padrão = 50 min
+```
+
+Os Blocos concretos materializam essa configuração:
 
 ```text
 Bloco 1 = 07:00–07:50
-→ duração real: 50 min
-
-Parâmetro opcional:
-duração padrão de aula = 50 min
+Bloco 2 = 07:50–08:40
 ```
 
-O parâmetro padrão não substitui a identidade e os horários reais dos Blocos.
+A Empresa pode possuir exceções ou Blocos de durações diferentes quando necessário.
 
-## 9. Limites
+Portanto, a duração padrão orienta a configuração, mas o Bloco concreto continua sendo a referência utilizada pelos módulos.
 
-Parâmetros não deve:
+## 10. Período Letivo
 
-- manter Professor, Turma, Disciplina ou outras referências;
-- registrar Períodos Letivos concretos;
-- registrar Blocos de Aula concretos;
-- armazenar tempos concretos de deslocamento entre Sites;
-- registrar ausências individuais;
-- armazenar uma tentativa de geração;
-- armazenar a grade;
-- absorver dados operacionais apenas porque mais de um módulo os consulta.
+A Empresa define como seus Períodos Letivos são organizados temporalmente.
 
-## 10. Questões em aberto
+Podem existir configurações como:
+
+- duração padrão;
+- meses ou datas usuais de início e término;
+- regras de composição do calendário.
+
+Cada Período Letivo concreto continua possuindo identidade e vigência efetiva própria.
+
+Exemplo:
+
+```text
+Parâmetro/política:
+semestre letivo padrão ≈ 5 meses
+
+Período concreto:
+2027.1 = 03/02/2027 até 02/07/2027
+```
+
+## 11. Limites
+
+Parâmetros não deve assumir ownership das referências estruturais apenas porque define seus valores temporais.
+
+Portanto, Parâmetros não é proprietário de:
+
+- Professor;
+- Turma;
+- Disciplina;
+- Site;
+- Bloco de Aula enquanto referência concreta;
+- Período Letivo enquanto ocorrência concreta;
+- Grade;
+- Disponibilidade individual;
+- tentativas e exceções de Gestão de Horários.
+
+## 12. Questões em aberto
 
 A modelagem ainda deve confirmar:
 
-- quais políticas são realmente compartilhadas;
-- quais possuem valor padrão;
-- quais podem ser alteradas por Empresa;
-- quais exigem histórico ou versionamento;
-- em que momento uma política alterada passa a valer para processos já iniciados;
-- em quais contextos o interstício mínimo se aplica.
+- como funciona a precedência entre valores globais e valores por Site/Turno;
+- quais configurações temporais aceitam sobrescrita;
+- quais mudanças precisam de histórico/versionamento;
+- quando uma mudança temporal passa a valer para processos já iniciados;
+- em quais contextos o interstício mínimo se aplica;
+- se valores temporais podem variar por Período Letivo sem alterar o padrão da Empresa.
