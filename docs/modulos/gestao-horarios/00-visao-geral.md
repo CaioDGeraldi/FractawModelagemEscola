@@ -8,7 +8,7 @@ A geração automática é uma responsabilidade central do módulo, mas não rep
 
 ## 2. Problema
 
-A elaboração de horários escolares exige conciliar professores, turmas, disciplinas, carga horária, ambientes e diferentes restrições de disponibilidade e alocação.
+A elaboração de horários escolares exige conciliar professores, turmas, disciplinas, carga horária, ambientes, tempos de aula, deslocamentos e diferentes restrições de disponibilidade e alocação.
 
 Quando o planejamento é feito manualmente ou com informações dispersas, conflitos podem passar despercebidos e alterações podem gerar novos problemas em outras partes da grade.
 
@@ -30,7 +30,7 @@ Reduzir conflitos de alocação entre professores, turmas, horários e espaços 
 
 ### OBJ-GH-003
 
-Considerar restrições de disponibilidade, infraestrutura, deslocamento e regras institucionais.
+Considerar restrições de disponibilidade, infraestrutura, deslocamento, interstício e demais regras institucionais.
 
 ### OBJ-GH-004
 
@@ -52,16 +52,24 @@ Registrar exceções que impeçam uma alocação sem interromper o processamento
 
 Quando necessário, concluir com uma grade parcial acompanhada das situações que exigem intervenção humana.
 
+### OBJ-GH-009
+
+Permitir aulas com um ou mais Professores quando a Oferta e as regras acadêmicas exigirem co-docência.
+
 ## 5. Entradas conceituais
 
 Gestão de Horários pode consumir:
 
 - referências estruturais da Escola;
+- Oferta de Disciplina;
+- Professores habilitados e/ou atribuídos;
 - políticas vigentes fornecidas por Parâmetros;
 - disponibilidade docente;
-- demandas de aula;
-- informações de ambientes e recursos;
-- dados de deslocamento quando aplicáveis.
+- Blocos de Aula e Intervalos;
+- Ambientes e recursos;
+- tempos de Deslocamento entre Sites;
+- Período Letivo;
+- demais demandas necessárias ao planejamento.
 
 Consumir uma informação não transfere sua propriedade para Gestão de Horários.
 
@@ -71,17 +79,51 @@ Quando o módulo Disponibilidade estiver disponível, Gestão de Horários deve 
 
 Na ausência dele, a gestão da grade deve continuar utilizável a partir de outra fonte compatível de disponibilidade.
 
-## 7. Políticas
+## 7. Políticas e restrições temporais
 
 Gestão de Horários aplica políticas institucionais, mas não é proprietária das políticas compartilhadas.
 
-Por exemplo, o módulo pode utilizar a prioridade informada pela Disponibilidade e consultar a política vigente para decidir o peso ou bloqueio daquela restrição.
+Entre elas podem estar:
 
-## 8. Exceções
+- interpretação de prioridade de ausência;
+- prioridade mínima bloqueante;
+- máximo de aulas consecutivas;
+- Interstício mínimo;
+- margem de deslocamento;
+- outros limites institucionais.
+
+O módulo deve distinguir os dados estruturais das políticas.
+
+Exemplo:
+
+```text
+Bloco real:            07:00–07:50
+Deslocamento A → B:    35 min
+Margem configurada:    10 min
+Interstício aplicável: conforme política
+```
+
+A duração real da aula é determinada pelo Bloco alocado, não por uma constante interna do módulo.
+
+## 8. Co-docência
+
+Uma alocação pode possuir mais de um Professor.
+
+Quando isso ocorrer, todos os Professores participantes devem simultaneamente satisfazer:
+
+- disponibilidade;
+- habilitação ou vínculo acadêmico aplicável;
+- ausência de conflito com outra alocação;
+- deslocamento entre Sites;
+- Interstício e demais políticas aplicáveis.
+
+A existência de dois Professores atribuídos à Oferta não obriga que todas as aulas utilizem os dois, salvo quando os requisitos da Oferta determinarem isso.
+
+## 9. Exceções
 
 Quando uma situação impedir uma alocação e não houver solução automática possível, deve ser registrada uma exceção de planejamento.
 
-A exceção não deve encerrar toda a geração.
+A exceção não encerra toda a geração.
 
 O processo continua para as demais alocações possíveis e apresenta ao responsável:
 
@@ -89,19 +131,20 @@ O processo continua para as demais alocações possíveis e apresenta ao respons
 - o motivo do impedimento;
 - o contexto necessário para intervenção humana.
 
-## 9. Intervenção humana
+## 10. Intervenção humana
 
 Negociação com professores, alteração de disponibilidade ou outra decisão externa não deve ser mascarada como solução automática.
 
 Após a mudança das condições, uma nova geração ou remontagem pode ocorrer.
 
-## 10. Ownership
+## 11. Ownership
 
 Pertencem a Gestão de Horários, quando confirmados pela modelagem:
 
 - demandas de planejamento;
 - tentativas de geração;
 - alocações produzidas;
+- Professores participantes de cada alocação;
 - conflitos detectados;
 - exceções de planejamento;
 - resultados e versões da grade.
@@ -109,10 +152,11 @@ Pertencem a Gestão de Horários, quando confirmados pela modelagem:
 Não pertencem ao módulo:
 
 - Professor, Turma, Disciplina e demais referências estruturais;
-- política institucional de prioridades;
-- disponibilidade docente original.
+- política institucional de prioridades, Interstício ou margem;
+- disponibilidade docente original;
+- Blocos, Sites, Ambientes e Deslocamentos estruturais.
 
-## 11. Questões em aberto
+## 12. Questões em aberto
 
 ### QGH-001 — Remontagem
 
@@ -129,3 +173,7 @@ Quais estados precisam ser versionados, publicados ou congelados para garantir r
 ### QGH-004 — Resultado da geração
 
 Quais estados formais uma tentativa de geração pode assumir e como distinguir falha de validação, inviabilidade comprovada e busca inconclusiva?
+
+### QGH-005 — Co-docência
+
+Como a Oferta determina se todos os Professores atribuídos devem participar juntos ou se a participação pode variar entre as aulas?
