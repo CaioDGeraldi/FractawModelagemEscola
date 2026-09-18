@@ -12,7 +12,7 @@ O Tipo de Empresa Escola fornece o contexto de negócio necessário para represe
 
 Esse contexto determina quais conceitos, políticas e módulos fazem sentido para uma Empresa classificada como Escola.
 
-`TipoEmpresa` não executa regras de negócio e não concentra a implementação dos módulos. Ele define contexto e aplicabilidade.
+`TipoEmpresa` não executa regras de negócio, não concentra implementação dos módulos e não habilita módulos automaticamente. Ele define contexto e aplicabilidade.
 
 ## 3. Composição conceitual
 
@@ -63,19 +63,31 @@ Essas referências não pertencem ao Catálogo de Produtos da plataforma.
 
 Parâmetros é uma capacidade-base genérica do FractawModules.
 
-A modelagem da Escola identifica quais políticas e configurações são necessárias no contexto escolar, qual sua semântica e quais módulos podem consumi-las.
+A modelagem da Escola identifica políticas, defaults, limites e configurações empresariais compartilháveis cuja natureza realmente responda a como a Empresa decidiu operar.
 
-A Empresa mantém os valores efetivamente vigentes.
-
-Exemplos já identificados como candidatos:
+Exemplos fortes:
 
 - política de interpretação da prioridade de ausência;
 - prioridade mínima bloqueante;
-- limites institucionais de alocação;
+- duração padrão de aula;
 - máximo de aulas consecutivas;
-- margens ou tolerâncias gerais utilizadas no planejamento.
+- interstício institucional;
+- margem ou tolerância geral de deslocamento.
 
-Um conceito não se torna parâmetro apenas porque é configurável.
+`Configurável` não é critério suficiente para transformar um conceito em Parâmetro.
+
+Assim:
+
+```text
+duração padrão de aula = 50 min
+→ política/configuração candidata a Parâmetros
+
+Bloco 3 = 09:00–09:50
+→ referência concreta
+
+Período Letivo 2027.1 = datas concretas
+→ referência concreta
+```
 
 ### 3.3 Módulos funcionais
 
@@ -91,25 +103,73 @@ Responsável pelo planejamento, geração, revisão, exceções, remontagem e re
 
 Os módulos mantêm ownership de seu próprio estado operacional e podem consumir referências e políticas por contratos adequados.
 
-## 4. Atores e autorização
+## 4. Identidade organizacional e autorização
 
-A modelagem separa três dimensões:
+A modelagem respeita as dimensões já existentes no FractawModules:
 
 ```text
-papel empresarial
-≠ função escolar
-≠ autorização funcional
+Cargo
+→ função organizacional
+
+Papel empresarial
+→ PROPRIETARIO / ADMINISTRADOR_GERAL / MEMBRO
+
+Autoridade modular
+→ USUARIO / ADMINISTRADOR, conforme o contrato vigente
+
+Permissão funcional
+→ operação concreta, quando requisitos futuros exigirem granularidade adicional
 ```
 
-Um Diretor pode possuir papel empresarial `MEMBRO` e, separadamente, receber autorização para operar Gestão de Horários.
+Cargo não concede autorização.
 
-Da mesma forma, possuir papel `PROPRIETARIO` ou `ADMINISTRADOR_GERAL` não significa automaticamente poder gerar ou gerenciar horários.
+Diretor e Coordenador, salvo requisito futuro de entidade de domínio independente, são funções organizacionais compatíveis com `Cargo` no TipoEmpresa Escola.
 
-O Professor é uma referência estrutural do domínio e, quando atua como usuário do sistema, é o ator responsável por informar sua própria disponibilidade no fluxo normal.
+Professor exige uma distinção adicional:
 
-A forma técnica de autorização permanece responsabilidade do FractawModules.
+```text
+Professor estrutural
+≠ Cargo Professor
+≠ Usuario
+≠ EmpresaUsuario
+```
 
-## 5. Fronteiras com a plataforma
+Um Professor pode existir no domínio sem possuir acesso ao Fractaw.
+
+Quando possuir acesso, a associação entre Professor e EmpresaUsuario deverá ser representável, mas sua persistência permanece em aberto.
+
+## 5. Contrato modular
+
+A Escola deve preservar:
+
+```text
+aplicabilidade
+≠ habilitação
+≠ concessão
+```
+
+Ser aplicável ao TipoEmpresa Escola não habilita o módulo para todas as Empresas Escola.
+
+A existência do código também não habilita uma Empresa.
+
+Depois dos gates de vínculo ativo, aplicabilidade e habilitação, o contrato atual é:
+
+```text
+PROPRIETARIO
+→ autoridade modular ADMINISTRADOR
+
+ADMINISTRADOR_GERAL
+→ autoridade modular ADMINISTRADOR
+
+MEMBRO
+→ depende de concessão modular USUARIO ou ADMINISTRADOR
+```
+
+Isso não resolve antecipadamente permissões funcionais granulares dentro de Disponibilidade ou Gestão de Horários.
+
+Ainda deve ser decidido, quando os requisitos exigirem, como operações como gerar, revisar, publicar ou corrigir disponibilidade se relacionam com a autoridade modular atual.
+
+## 6. Fronteiras com a plataforma
 
 A Escola pode depender de capacidades públicas da plataforma FractawModules.
 
@@ -123,16 +183,17 @@ Escola
 
 O Catálogo de Produtos permanece uma capacidade própria da plataforma e não é o repositório das referências escolares.
 
-Parâmetros permanece uma capacidade-base genérica e recebe semântica concreta conforme os requisitos do contexto Escola.
+Parâmetros permanece uma capacidade-base genérica e recebe semântica concreta conforme os requisitos do contexto Escola, sem depender diretamente de models escolares.
 
-## 6. Escopo atual
+## 7. Escopo atual
 
 Faz parte da modelagem atual:
 
 - referências e relações acadêmicas;
 - estrutura física e temporal;
 - atores e responsabilidades;
-- separação entre função escolar e autorização funcional;
+- relação entre Cargo, Professor estrutural e identidade de acesso;
+- requisitos de autorização e modularidade aplicáveis aos módulos escolares;
 - políticas escolares configuráveis;
 - módulo Disponibilidade;
 - módulo Gestão de Horários;
@@ -144,11 +205,12 @@ Não faz parte deste repositório:
 - implementação do FractawModules;
 - decisões internas de persistência;
 - escolha de padrões técnicos para resolver o contexto de `TipoEmpresa`;
-- implementação do mecanismo de autorização;
+- schema de permissões funcionais granulares;
+- schema ou mecanismo de Parâmetros;
 - redefinição do Catálogo de Produtos;
 - funcionalidades escolares ainda não modeladas e sem requisitos definidos.
 
-## 7. Princípios de modelagem
+## 8. Princípios de modelagem
 
 ### MOD-001 — Ownership explícito
 
@@ -172,13 +234,19 @@ Módulos escolares não devem assumir ownership do estado interno de outros mód
 
 Integrações podem existir por contratos explícitos.
 
-### MOD-006 — Autorização por capacidade
+### MOD-006 — Cargo não é autorização
 
-Papel empresarial e função escolar não devem ser usados como substitutos de autorização funcional.
+Função organizacional e autorização respondem a perguntas diferentes.
 
-Operações de módulo devem depender da capacidade funcional necessária, sem acoplamento obrigatório a títulos como Diretor ou a papéis empresariais específicos.
+### MOD-007 — Aplicabilidade não habilita
 
-## 8. Questões estruturais em aberto
+Um módulo aplicável ao TipoEmpresa Escola somente é utilizável por uma Empresa quando o contrato vigente de habilitação e autoridade também for satisfeito.
+
+### MOD-008 — Configurável não significa Parâmetro
+
+Um valor ou conceito configurável continua estrutural ou operacional quando sua natureza assim determinar.
+
+## 9. Questões estruturais em aberto
 
 ### QE-001 — Atribuição docente
 
@@ -196,10 +264,14 @@ Turnos e Blocos podem ser compartilhados entre Sites ou cada Site precisa de sua
 
 Como representar tipos, capacidades e recursos de Ambiente sem criar classificações rígidas demais?
 
-### QE-005 — Granularidade das autorizações
+### QE-005 — Granularidade das permissões funcionais
 
-Quais capacidades funcionais precisam ser distinguidas em Disponibilidade e Gestão de Horários?
+Quais operações de Disponibilidade e Gestão de Horários exigirão permissões mais granulares que a autoridade modular mínima atual?
 
-### QE-006 — Evolução do Company Type
+### QE-006 — Relação com autoridade administrativa
+
+Quando permissões granulares existirem, `PROPRIETARIO` e `ADMINISTRADOR_GERAL`, hoje administradores derivados de todo módulo habilitado e aplicável, receberão automaticamente todas as operações funcionais ou apenas autoridade administrativa suficiente para gerenciá-las?
+
+### QE-007 — Evolução do Company Type
 
 Novos módulos escolares deverão ser incorporados sem exigir que os módulos existentes assumam responsabilidades que não lhes pertencem.
