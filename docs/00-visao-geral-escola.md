@@ -35,17 +35,27 @@ Tipo de Empresa Escola
 
 São conceitos do domínio escolar que possuem identidade própria e podem ser referenciados por diferentes processos ou históricos.
 
-As referências iniciais em modelagem são:
+As referências estruturais atualmente consolidadas incluem:
 
 - Professor;
 - Curso;
 - Disciplina;
 - Turma;
 - Período Letivo;
-- Site ou Unidade Escolar;
-- Sala;
-- Laboratório;
+- Site;
+- Ambiente;
+- Turno;
 - Bloco de Aula.
+
+Também existem relações estruturais com significado próprio, como:
+
+- Matriz Curricular;
+- Oferta de Disciplina;
+- Habilitação docente;
+- Atribuição docente;
+- Deslocamento entre Sites.
+
+Sala comum, laboratório, auditório e outros espaços são tratados como classificações ou capacidades de Ambiente, não como entidades estruturais paralelas.
 
 Essas referências não pertencem ao Catálogo de Produtos da plataforma.
 
@@ -62,6 +72,7 @@ Exemplos já identificados como candidatos:
 - política de interpretação da prioridade de ausência;
 - prioridade mínima bloqueante;
 - limites institucionais de alocação;
+- máximo de aulas consecutivas;
 - margens ou tolerâncias gerais utilizadas no planejamento.
 
 Um conceito não se torna parâmetro apenas porque é configurável.
@@ -89,8 +100,6 @@ papel empresarial
 ≠ função escolar
 ≠ autorização funcional
 ```
-
-Exemplo:
 
 Um Diretor pode possuir papel empresarial `MEMBRO` e, separadamente, receber autorização para operar Gestão de Horários.
 
@@ -120,12 +129,13 @@ Parâmetros permanece uma capacidade-base genérica e recebe semântica concreta
 
 Faz parte da modelagem atual:
 
-- identificação das referências estruturais necessárias ao domínio Escola;
-- identificação dos atores e responsabilidades;
+- referências e relações acadêmicas;
+- estrutura física e temporal;
+- atores e responsabilidades;
 - separação entre função escolar e autorização funcional;
-- identificação das políticas escolares configuráveis;
-- modelagem do módulo Disponibilidade;
-- modelagem do módulo Gestão de Horários;
+- políticas escolares configuráveis;
+- módulo Disponibilidade;
+- módulo Gestão de Horários;
 - integração conceitual entre esses elementos;
 - regras de negócio e restrições compartilhadas quando houver ownership claro.
 
@@ -170,18 +180,26 @@ Operações de módulo devem depender da capacidade funcional necessária, sem a
 
 ## 8. Questões estruturais em aberto
 
-### QE-001 — Referências definitivas
+### QE-001 — Atribuição docente
 
-Quais conceitos candidatos realmente possuem identidade estrutural própria no domínio Escola?
+Em que momento o Professor responsável por uma Oferta de Disciplina deve ser definido?
 
-### QE-002 — Limite entre referência e parâmetro
+### QE-002 — Matriz Curricular
 
-Conceitos como Bloco de Aula e relações de deslocamento devem ser classificados conforme sua identidade, reutilização e papel histórico, e não apenas por serem configuráveis.
+Como vigência e versionamento curricular devem funcionar?
 
-### QE-003 — Evolução do Company Type
+### QE-003 — Escopo temporal
 
-Novos módulos escolares deverão ser incorporados sem exigir que os módulos existentes assumam responsabilidades que não lhes pertencem.
+Turnos e Blocos podem ser compartilhados entre Sites ou cada Site precisa de sua própria organização temporal?
 
-### QE-004 — Granularidade das autorizações
+### QE-004 — Recursos de Ambiente
+
+Como representar tipos, capacidades e recursos de Ambiente sem criar classificações rígidas demais?
+
+### QE-005 — Granularidade das autorizações
 
 Quais capacidades funcionais precisam ser distinguidas em Disponibilidade e Gestão de Horários?
+
+### QE-006 — Evolução do Company Type
+
+Novos módulos escolares deverão ser incorporados sem exigir que os módulos existentes assumam responsabilidades que não lhes pertencem.
