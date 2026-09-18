@@ -18,6 +18,8 @@ Um conceito é referência estrutural quando:
 
 Ser configurável não transforma automaticamente um conceito em Parâmetro.
 
+Da mesma forma, possuir um valor temporal não transforma automaticamente um conceito em Parâmetro.
+
 ## 3. Referências estruturais iniciais
 
 ### REF-001 — Professor
@@ -30,11 +32,20 @@ Pode:
 - possuir Disponibilidade;
 - receber Atribuições docentes;
 - aparecer em alocações de uma Grade de Horários;
-- possuir vínculo com uma identidade de acesso à plataforma.
+- possuir associação com uma identidade de acesso à plataforma.
 
 Professor existe como conceito escolar independentemente de possuir usuário no sistema.
 
-`Professor`, `Usuario` e `EmpresaUsuario` não são o mesmo conceito.
+```text
+Professor estrutural
+≠ Cargo Professor
+≠ Usuario
+≠ EmpresaUsuario
+```
+
+`Cargo Professor` representa função organizacional no vínculo empresarial; Professor representa a referência do domínio acadêmico.
+
+A forma técnica de associar Professor e EmpresaUsuario permanece em aberto.
 
 ### REF-002 — Curso
 
@@ -68,11 +79,13 @@ Pode estar relacionada a:
 
 ### REF-005 — Período Letivo
 
-Representa a vigência acadêmica utilizada para organizar Turmas, disponibilidade, ofertas e planejamento.
+Representa uma vigência acadêmica concreta utilizada para organizar Turmas, disponibilidade, ofertas e planejamento.
 
 Pode corresponder, por exemplo, a semestre ou ano letivo conforme a instituição.
 
-Período Letivo não deve ser confundido com Turno ou Bloco de Aula.
+Possui identidade e datas efetivas próprias.
+
+Uma regra de duração padrão pode ser candidata a Parâmetros, mas o Período Letivo concreto continua sendo referência estrutural.
 
 ### REF-006 — Site
 
@@ -105,6 +118,8 @@ Representa uma organização recorrente de parte da jornada escolar, como manhã
 
 Pode organizar Blocos de Aula e ser utilizado como referência por Turmas e regras de planejamento.
 
+Defaults gerais de horário podem ser políticas, mas o Turno concreto não se torna Parâmetro apenas por possuir horários configuráveis.
+
 ### REF-009 — Bloco de Aula
 
 Representa uma faixa concreta e alocável de tempo.
@@ -116,7 +131,7 @@ Possui, conceitualmente:
 - ordem dentro de um Turno;
 - identidade utilizada por Disponibilidade e Gestão de Horários.
 
-Intervalos não alocáveis não precisam ser representados como Blocos de Aula.
+Uma duração padrão de aula pode ser candidata a Parâmetros, mas um Bloco concreto como `09:00–09:50` permanece referência estrutural.
 
 ## 4. Relações acadêmicas estruturais
 
@@ -150,31 +165,40 @@ O detalhamento principal está em `06-modelo-fisico-temporal.md`.
 
 ### Deslocamento entre Sites
 
-Representa o tempo concreto de deslocamento de um Site de origem para um Site de destino.
+Representa uma relação direcional concreta entre um Site de origem e um Site de destino.
 
-É uma relação estrutural direcional:
+Nesta modelagem, o tempo específico necessário para esse par faz parte dos dados próprios da relação estrutural:
 
 ```text
-Site A → Site B
+Site A → Site B = 35 min
+Site B → Site A = 45 min
 ```
 
-O tempo contrário pode ser diferente.
+O valor pode diferir por sentido.
 
-Uma margem geral adicional de deslocamento é política e pertence a Parâmetros.
+Isso não impede que a Empresa possua políticas gerais aplicadas sobre esses dados, por exemplo:
+
+```text
+margem geral de deslocamento = 10 min
+```
+
+A margem geral é candidata natural a Parâmetros.
 
 ## 6. Conceitos que não são referências estruturais
 
-### Diretor
+### Diretor e Coordenador
 
-Diretor é uma função/ator escolar e não uma referência estrutural necessária ao planejamento.
+Enquanto representarem somente função organizacional, são conceitos compatíveis com `Cargo` do TipoEmpresa Escola e não exigem entidade estrutural paralela.
+
+A classificação poderá ser revista se futuros requisitos demonstrarem identidade de domínio independente.
 
 ### Papel empresarial
 
 `PROPRIETARIO`, `ADMINISTRADOR_GERAL` e `MEMBRO` pertencem à plataforma FractawModules.
 
-### Autorizações funcionais
+### Autoridade modular e permissões funcionais
 
-Representam capacidades de acesso e não referências acadêmicas.
+Representam autorização e não referências acadêmicas.
 
 ### Disponibilidade declarada
 
@@ -184,9 +208,11 @@ Representam capacidades de acesso e não referências acadêmicas.
 
 São estados ou resultados pertencentes a Gestão de Horários.
 
-### Margens e limites institucionais
+### Políticas, defaults, margens e limites institucionais
 
-São políticas/configurações e pertencem conceitualmente a Parâmetros quando aplicáveis.
+Pertencem conceitualmente a Parâmetros quando sua natureza for realmente política/configuração empresarial compartilhável.
+
+Ser configurável, isoladamente, não basta.
 
 ## 7. Relação com o Catálogo de Produtos
 
@@ -276,6 +302,10 @@ Como representar requisitos de recursos e capacidades sem criar tipos excessivam
 ### QR-005 — Turma integral
 
 Como uma Turma que opera em mais de um Turno deve ser representada?
+
+### QR-006 — Intervalos concretos
+
+Intervalos precisam de identidade própria em algum caso real ou podem permanecer como parte da organização temporal concreta sem entidade estrutural independente?
 
 ## 11. Próximas definições
 
