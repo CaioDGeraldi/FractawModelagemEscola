@@ -60,19 +60,19 @@ Responde principalmente:
 
 Possui identidade própria e pode ser referenciada por outros registros ou históricos.
 
-Exemplos candidatos:
+Exemplos consolidados nesta modelagem:
 
 - Professor;
-- Disciplina;
 - Curso;
+- Disciplina;
 - Turma;
-- Site;
-- Sala;
-- Laboratório;
 - Período Letivo;
+- Site;
+- Ambiente;
+- Turno;
 - Bloco de Aula.
 
-A lista é provisória. A modelagem deve confirmar cada conceito.
+Também podem existir relações estruturais com significado próprio, como Matriz Curricular, Oferta de Disciplina, Habilitação docente, Atribuição docente e Deslocamento entre Sites.
 
 ### Política ou configuração
 
@@ -80,7 +80,7 @@ Responde principalmente:
 
 > Como esta Empresa decidiu operar?
 
-É candidata natural ao módulo-base Parâmetros.
+É candidata natural à capacidade-base Parâmetros.
 
 Exemplos:
 
