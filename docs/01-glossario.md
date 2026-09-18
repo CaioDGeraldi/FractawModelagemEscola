@@ -116,11 +116,36 @@ A co-docência é opcional: a regra geral continua permitindo uma aula com apena
 
 Professores atribuídos a uma Oferta não precisam necessariamente participar juntos de todas as aulas dessa Oferta.
 
+### Parâmetro
+
+Política ou configuração que define como uma Empresa decidiu operar dentro do contexto Escola.
+
+No domínio temporal, Parâmetros é a fonte das definições de duração, horário, intervalo, interstício, deslocamento considerado e demais valores temporais configuráveis pela Empresa.
+
+Parâmetros não absorve a identidade das referências estruturais que materializam essas configurações.
+
+### Configuração temporal
+
+Conjunto de valores e políticas temporais definidos pela Empresa.
+
+Pode incluir, conforme o contexto:
+
+- duração padrão de aula;
+- horários de Turnos;
+- organização de Blocos;
+- Intervalos;
+- duração padrão de Período Letivo;
+- interstício;
+- tempos de deslocamento considerados;
+- margens e tolerâncias.
+
+Empresas diferentes podem utilizar configurações temporais diferentes.
+
 ### Período Letivo
 
-Referência estrutural que delimita uma vigência acadêmica, como semestre ou ano letivo.
+Referência estrutural que representa uma vigência acadêmica concreta, como semestre ou ano letivo.
 
-Possui início e término concretos; sua duração é consequência dessas datas.
+Sua organização temporal é definida pela Empresa por meio de Parâmetros e materializada em início e término efetivos.
 
 Não deve ser confundido com Turno ou Bloco de Aula.
 
@@ -146,33 +171,33 @@ Não é tratado como entidade estrutural paralela a Ambiente.
 
 ### Deslocamento entre Sites
 
-Relação estrutural direcional que representa o tempo concreto necessário para ir de um Site de origem a outro Site da mesma Empresa.
+Relação estrutural direcional entre um Site de origem e um Site de destino.
 
-Uma margem institucional adicional de deslocamento é política e pertence a Parâmetros.
+O tempo considerado para essa relação é definido pela Empresa e pode divergir entre pares e sentidos.
 
 ### Turno
 
 Referência temporal organizacional, como manhã, tarde ou noite.
 
-Pode ser utilizada por Turmas e para organizar Blocos de Aula e Intervalos.
+Sua identidade pode ser utilizada por Turmas e Blocos, enquanto seus horários são definidos pela configuração temporal da Empresa.
 
 ### Bloco de Aula
 
-Faixa concreta e alocável de tempo utilizada por Disponibilidade e Gestão de Horários.
+Faixa concreta e alocável utilizada por Disponibilidade e Gestão de Horários.
 
-Possui horário de início e término. Sua duração real é derivada desses horários.
+Possui identidade para que diferentes módulos referenciem a mesma faixa. Seus horários e duração materializam a configuração temporal definida pela Empresa.
 
 ### Intervalo
 
-Faixa concreta e não alocável dentro da organização temporal, como recreio ou pausa entre Blocos.
+Faixa concreta e não alocável dentro da organização temporal.
 
-Intervalo é parte da estrutura temporal real da instituição.
+Sua duração e posição também são definidas pela configuração temporal da Empresa.
 
 ### Interstício
 
 Tempo mínimo livre exigido por política entre determinadas atividades.
 
-Interstício não é sinônimo de Intervalo: um Intervalo pode satisfazer um Interstício, mas o primeiro é dado estrutural e o segundo é política/configuração.
+Interstício não é sinônimo de Intervalo: um Intervalo concreto pode satisfazer um Interstício, mas os conceitos possuem responsabilidades diferentes.
 
 ### Disponibilidade
 
@@ -185,12 +210,6 @@ Também pode designar, em contexto específico, a informação operacional produ
 Valor informado no contexto de Disponibilidade para representar a importância ou força de uma restrição de ausência.
 
 Seu significado operacional é definido pela política vigente da Empresa.
-
-### Parâmetro
-
-Política ou configuração que define como uma Empresa decidiu operar dentro do contexto Escola.
-
-Parâmetros não devem absorver referências estruturais ou estado operacional.
 
 ### Gestão de Horários
 
@@ -234,6 +253,13 @@ Período Letivo
 
 Intervalo
 ≠ Interstício
+```
+
+E, para tempo:
+
+```text
+Configuração temporal em Parâmetros
+≠ identidade da referência concreta
 ```
 
 Os conceitos podem estar relacionados, mas não representam a mesma responsabilidade de domínio.
