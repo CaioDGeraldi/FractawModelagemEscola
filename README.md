@@ -2,7 +2,7 @@
 
 Repositório de modelagem do **Tipo de Empresa Escola** no FractawModules.
 
-Este projeto registra o domínio escolar, suas referências estruturais, as políticas que precisam ser fornecidas pela capacidade genérica de Parâmetros e os módulos funcionais próprios da Escola.
+Este projeto registra o domínio escolar, suas referências estruturais, políticas/configurações reais, atores e módulos funcionais.
 
 O objetivo é definir responsabilidades, regras, requisitos e fronteiras de domínio antes das decisões de implementação no FractawModules.
 
@@ -14,9 +14,11 @@ Esta modelagem respeita as decisões arquiteturais vigentes do FractawModules:
 - `TipoEmpresa` define contexto e aplicabilidade, mas não executa regras de domínio;
 - a plataforma não depende de código específico da Escola;
 - referências próprias da Escola não pertencem ao Catálogo de Produtos;
-- Parâmetros é uma capacidade-base genérica do FractawModules;
+- Parâmetros é uma capacidade-base genérica planejada para a F08;
+- Cargo representa função organizacional e não autorização;
 - módulos escolares mantêm seus próprios processos e estados operacionais;
-- o mecanismo técnico de composição por `TipoEmpresa` é responsabilidade do FractawModules.
+- aplicabilidade, habilitação empresarial e concessão ao Membro são conceitos distintos;
+- o mecanismo técnico de composição e persistência pertence ao FractawModules.
 
 O documento `docs/contexto-fractaw.md` registra essas fronteiras.
 
@@ -56,12 +58,7 @@ docs/
     │
     └── gestao-horarios/
         └── 00-visao-geral.md
-
-diagramas/
-└── arquivos de modelagem adicionados conforme necessidade
 ```
-
-Os arquivos previstos serão adicionados de forma incremental conforme cada etapa for desenvolvida e revisada.
 
 ## Regra de classificação
 
@@ -73,6 +70,60 @@ Antes de decidir onde um conceito pertence, a modelagem deve identificar sua nat
 
 A classificação é feita pelo significado do conceito, não pela conveniência de implementação.
 
+Em particular:
+
+```text
+configurável
+≠ automaticamente Parâmetro
+
+política/default
+≠ referência/ocorrência concreta
+```
+
+## Identidade e autorização
+
+A modelagem preserva:
+
+```text
+Cargo
+≠ Papel empresarial
+≠ Autoridade modular
+≠ Permissão funcional
+```
+
+E também:
+
+```text
+Professor estrutural
+≠ Cargo Professor
+≠ Usuario
+≠ EmpresaUsuario
+```
+
+Diretor e Coordenador são tratados como funções organizacionais compatíveis com Cargo enquanto não existir requisito para entidade de domínio independente.
+
+## Contrato modular
+
+Os módulos escolares respeitam:
+
+```text
+aplicabilidade
+≠ habilitação
+≠ concessão
+```
+
+Ser aplicável ao TipoEmpresa Escola ou existir no código não habilita automaticamente o módulo para uma Empresa.
+
+No contrato vigente, depois dos gates de vínculo ativo, aplicabilidade e habilitação:
+
+```text
+PROPRIETARIO          → ADMINISTRADOR no módulo
+ADMINISTRADOR_GERAL   → ADMINISTRADOR no módulo
+MEMBRO                 → depende de concessão USUARIO ou ADMINISTRADOR
+```
+
+Permissões funcionais mais granulares permanecem uma necessidade a ser definida quando casos de uso concretos exigirem.
+
 ## Estado atual
 
 Os primeiros módulos funcionais em modelagem são:
@@ -80,17 +131,26 @@ Os primeiros módulos funcionais em modelagem são:
 - **Disponibilidade**;
 - **Gestão de Horários**.
 
-A base acadêmica já distingue:
+A base acadêmica distingue:
 
-- Curso e Disciplina;
+- Curso e Turma;
 - Matriz Curricular e Oferta de Disciplina;
-- Habilitação docente e Atribuição docente.
+- Habilitação docente e Atribuição docente;
+- Professores atribuídos à Oferta e Professores participantes de cada aula;
+- co-docência opcional.
 
-A base física e temporal já distingue:
+A base física e temporal distingue:
 
 - Site e Ambiente;
-- classificação/capacidades de Ambiente em vez de entidades paralelas para Sala e Laboratório;
-- Deslocamento estrutural entre Sites e margem institucional de deslocamento;
-- Período Letivo, Turno e Bloco de Aula.
+- Sala/Laboratório como classificações ou capacidades de Ambiente;
+- Deslocamento estrutural específico entre Sites e margem geral de deslocamento;
+- Período Letivo, Turno e Bloco de Aula como referências/ocorrências concretas;
+- políticas/defaults temporais reais de ocorrências concretas configuráveis.
 
 A geração automática da grade é uma responsabilidade de Gestão de Horários, não o nome do módulo como um todo.
+
+## Limite deste repositório
+
+Este projeto não escolhe prematuramente schema de Parâmetros, persistência de permissões granulares, associação técnica Professor ↔ EmpresaUsuario, Registry, Manifest, Dependency Graph, service locator ou mecanismos de runtime por TipoEmpresa.
+
+Questões sem requisito suficiente permanecem explicitamente abertas.
