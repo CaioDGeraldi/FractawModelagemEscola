@@ -14,14 +14,15 @@ Valores que determinam duração, horário, intervalo, janela ou tempo considera
 
 Parâmetros é a fonte dessas definições e políticas.
 
-As referências temporais concretas continuam existindo para fornecer identidade e histórico aos módulos.
+As referências temporais concretas continuam existindo apenas quando identidade e histórico próprios forem necessários aos módulos.
 
 ```text
 Parâmetros da Empresa
         ↓
 configuração temporal
         ↓
-Período Letivo / Turno / Bloco / Intervalo
+Período Letivo / Turno / Bloco
++ Intervalos configurados
         ↓
 Disponibilidade e Gestão de Horários
 ```
@@ -37,14 +38,16 @@ Estrutura física                     Estrutura temporal
 
 Site                                 Período Letivo
  └── Ambiente                         └── Turno
-                                        ├── Bloco de Aula
-                                        └── Intervalo
+                                        └── Bloco de Aula
 
 Site ── Deslocamento ──> Site
 
-              ↑
-     valores definidos pela Empresa
-          via Parâmetros
+Parâmetros temporais
+├── duração de aula
+├── horários de Turno
+├── Intervalos
+├── interstícios
+└── tempos de deslocamento
 
               ↓
       Gestão de Horários
@@ -221,6 +224,7 @@ duração padrão da aula = 50 min
 Blocos concretos:
 Bloco 1 = 07:00–07:50
 Bloco 2 = 07:50–08:40
+Bloco 3 = 09:00–09:50
 ```
 
 Uma Empresa pode utilizar durações distintas quando necessário.
@@ -246,11 +250,11 @@ A duração concreta é consequência dos valores definidos pela Empresa e aplic
 
 ## 10. Intervalo
 
-### DEC-FT-007 — Intervalos concretos materializam a configuração temporal
+### DEC-FT-007 — Intervalo pertence à configuração temporal em Parâmetros
 
-`Intervalo` representa uma faixa concreta e não alocável da organização temporal.
+`Intervalo` representa uma faixa de tempo não alocável configurada pela Empresa.
 
-Sua posição e duração são definidas pela Empresa.
+Exemplo:
 
 ```text
 Bloco 2    07:50–08:40
@@ -258,35 +262,42 @@ Intervalo  08:40–09:00
 Bloco 3    09:00–09:50
 ```
 
-O Intervalo possui existência concreta na grade temporal.
+Diferentemente de Bloco de Aula, o Intervalo não precisa possuir identidade estrutural própria para ser referenciado por Disponibilidade ou Gestão de Horários.
 
-Já `Interstício mínimo` é uma política que exige separação mínima entre determinadas atividades.
+Ele é uma regra/configuração da organização temporal que informa ao sistema que determinada faixa não pode receber alocações.
+
+Pode variar por:
+
+- Empresa;
+- Site;
+- Turno;
+- outro escopo permitido pela configuração.
+
+Portanto:
 
 ```text
+Bloco de Aula
+→ referência temporal alocável
+
 Intervalo
-→ faixa concreta configurada
-
-Interstício
-→ regra mínima configurada
+→ configuração temporal não alocável em Parâmetros
 ```
-
-Um Intervalo pode satisfazer um Interstício, mas os conceitos não são equivalentes.
 
 ---
 
 ## 11. Interstício
 
-Interstício é definido em Parâmetros.
-
-Pode variar conforme a Empresa e, se necessário, conforme o contexto permitido pela configuração.
-
-Exemplo:
+Interstício também é definido em Parâmetros, mas possui significado diferente de Intervalo.
 
 ```text
-interstício mínimo = 20 min
+Intervalo
+→ faixa não alocável explicitamente configurada
+
+Interstício
+→ tempo mínimo livre exigido entre determinadas atividades
 ```
 
-Gestão de Horários aplica essa política ao verificar sequências de atividades.
+Um Intervalo pode satisfazer um Interstício, mas não são equivalentes.
 
 ---
 
@@ -304,7 +315,7 @@ Esses vínculos descrevem contexto da Turma, não uma aula já alocada.
 
 ## 13. Relação com Disponibilidade
 
-Disponibilidade consome principalmente a estrutura temporal materializada:
+Disponibilidade consome principalmente os Blocos de Aula materializados:
 
 ```text
 Professor
@@ -313,6 +324,8 @@ Disponibilidade
   ↓
 Bloco de Aula
 ```
+
+Intervalos configurados não são oferecidos como Blocos disponíveis para declaração de disponibilidade ou alocação.
 
 Quando necessário, Site também pode compor o contexto da disponibilidade.
 
@@ -335,9 +348,11 @@ Ambiente
         +
 Deslocamento entre Sites
         +
-Intervalos
-        +
 Parâmetros temporais
+          ├── Intervalos
+          ├── Interstícios
+          ├── durações
+          └── deslocamentos
         ↓
 Grade de Horários
 ```
@@ -355,10 +370,12 @@ Exemplos:
 ```text
 Empresa A
   aula padrão = 50 min
+  intervalo = 08:40–09:00
   interstício = 10 min
 
 Empresa B
   aula padrão = 45 min
+  intervalo = 09:15–09:30
   interstício = 20 min
 ```
 
@@ -368,9 +385,11 @@ E, quando permitido:
 Empresa A
   Site Centro
     turno manhã = 07:00–12:00
+    intervalo = 08:40–09:00
 
   Site Anexo
     turno manhã = 07:30–12:30
+    intervalo = 09:00–09:20
 ```
 
 A precedência entre configuração global e configuração específica será definida tecnicamente no FractawModules, preservando a semântica estabelecida neste repositório.
@@ -403,6 +422,10 @@ Como representar Turmas que operam em mais de um Turno?
 
 Quando a Empresa altera uma configuração temporal, a mudança afeta somente novos Períodos/Blocos ou também estruturas já existentes?
 
+### QFT-007 — Escopo de Intervalos
+
+Intervalos podem ser definidos globalmente para a Empresa ou precisam sempre estar associados a um Turno e, eventualmente, a um Site?
+
 ---
 
 ## 17. Decisões consolidadas
@@ -415,6 +438,6 @@ Quando a Empresa altera uma configuração temporal, a mudança afeta somente no
 - Período Letivo permanece referência concreta, materializando uma configuração de vigência;
 - Turno permanece referência organizacional, materializando horários configurados;
 - Bloco de Aula permanece referência alocável, materializando duração e horários configurados;
-- Intervalo permanece faixa concreta não alocável, também definida pela configuração da Empresa;
-- Interstício mínimo permanece política configurável;
+- Intervalo pertence a Parâmetros como faixa temporal não alocável;
+- Interstício mínimo pertence a Parâmetros como regra de separação;
 - Gestão de Horários consome as configurações e referências sem assumir ownership sobre elas.
