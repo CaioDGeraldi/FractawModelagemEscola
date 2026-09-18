@@ -2,32 +2,41 @@
 
 ## 1. Objetivo
 
-Definir as referências estruturais necessárias para representar onde e quando as atividades escolares podem ocorrer, respeitando a decisão de que os valores temporais são configurados pela própria Empresa por meio de Parâmetros.
+Definir as referências estruturais necessárias para representar onde e quando as atividades escolares podem ocorrer, distinguindo referências e ocorrências concretas de políticas/defaults candidatos a Parâmetros.
 
 Este documento trata de domínio e relações conceituais. Não define models Django, tabelas, chaves estrangeiras ou estratégia de persistência.
 
 ## 2. Princípio temporal
 
-### DEC-FT-000 — A Empresa define sua configuração temporal
+### DEC-FT-000 — Natureza antes de configurabilidade
 
-Valores que determinam duração, horário, intervalo, janela ou tempo considerado pela operação escolar são configuráveis pela Empresa.
+A Empresa pode definir sua organização temporal, mas o fato de um valor ser temporal ou configurável não o transforma automaticamente em Parâmetro.
 
-Parâmetros é a fonte dessas definições e políticas.
-
-As referências temporais concretas continuam existindo apenas quando identidade e histórico próprios forem necessários aos módulos.
+A distinção central é:
 
 ```text
-Parâmetros da Empresa
-        ↓
-configuração temporal
-        ↓
-Período Letivo / Turno / Bloco
-+ Intervalos configurados
-        ↓
-Disponibilidade e Gestão de Horários
+política/default temporal
+≠
+referência/ocorrência temporal concreta
 ```
 
-Assim, duas Empresas do Tipo Escola podem operar com durações, horários, intervalos e deslocamentos diferentes.
+Exemplos:
+
+```text
+duração padrão de aula = 50 min
+→ candidata a Parâmetros
+
+Bloco 3 = 09:00–09:50
+→ referência concreta
+
+Período Letivo 2027.1 = datas efetivas
+→ referência concreta
+
+margem geral de deslocamento = 10 min
+→ candidata a Parâmetros
+```
+
+A futura capacidade Parâmetros pode fornecer políticas/defaults consumidos pela estrutura temporal, sem assumir ownership das referências concretas.
 
 ---
 
@@ -42,18 +51,18 @@ Site                                 Período Letivo
 
 Site ── Deslocamento ──> Site
 
-Parâmetros temporais
-├── duração de aula
-├── horários de Turno
-├── Intervalos
-├── interstícios
-└── tempos de deslocamento
+Políticas/defaults possíveis em Parâmetros
+├── duração padrão de aula
+├── interstício institucional
+├── margem geral de deslocamento
+├── regras/defaults de calendário
+└── outros limites temporais compartilháveis
 
               ↓
       Gestão de Horários
 ```
 
-A Gestão de Horários consome essas referências e configurações, mas não é proprietária delas.
+A Gestão de Horários consome referências e políticas sem assumir ownership delas.
 
 ---
 
@@ -107,47 +116,45 @@ Um Ambiente pode possuir capacidade de ocupação quando relevante.
 
 ## 6. Deslocamento entre Sites
 
-### DEC-FT-003 — A relação é estrutural; o tempo é configurado pela Empresa
+### DEC-FT-003 — Relação e tempo específico são dados estruturais
 
-A relação identifica um Site de origem e um Site de destino.
+Deslocamento identifica uma relação direcional entre um Site de origem e um Site de destino e o tempo concreto associado àquele par.
 
 ```text
-Site A → Site B
+Site A → Site B = 35 min
+Site B → Site A = 45 min
 ```
 
-A Empresa define o tempo considerado para essa relação por meio de sua configuração temporal.
+A relação é direcional, portanto os tempos podem divergir entre os sentidos.
 
-Exemplo:
+O tempo específico faz parte do dado próprio daquela relação estrutural. Ele não é classificado como Parâmetro apenas por ser temporal ou configurável.
+
+A Empresa pode possuir uma política geral adicional, candidata a Parâmetros:
 
 ```text
-A → B = 35 min
-B → A = 45 min
+margem geral de deslocamento = 10 min
 ```
 
-A relação é direcional, portanto os valores podem divergir entre os dois sentidos.
-
-A Empresa também pode definir margens adicionais.
+Gestão de Horários pode aplicar:
 
 ```text
-tempo A → B = 35 min
-margem = 10 min
+deslocamento estrutural A → B = 35 min
+margem institucional = 10 min
 tempo considerado = 45 min
 ```
-
-A identidade do par origem/destino pertence à estrutura escolar; os valores temporais associados pertencem à configuração da Empresa.
 
 ### Invariantes
 
 - origem e destino pertencem à mesma Empresa;
 - origem e destino são Sites diferentes;
-- valores temporais não podem ser negativos;
-- ausência de configuração não significa automaticamente zero minutos.
+- o tempo específico não pode ser negativo;
+- ausência de relação conhecida não significa automaticamente zero minutos.
 
 ---
 
 ## 7. Período Letivo
 
-### DEC-FT-004 — A Empresa define a organização temporal dos Períodos Letivos
+### DEC-FT-004 — Período Letivo é vigência concreta
 
 Período Letivo representa uma vigência acadêmica concreta e possui identidade própria.
 
@@ -156,24 +163,23 @@ Exemplos:
 - 1º semestre de 2027;
 - ano letivo de 2027.
 
-A Empresa define em Parâmetros como seus períodos são normalmente organizados, podendo estabelecer:
-
-- duração padrão;
-- datas ou meses usuais de início e término;
-- demais regras de calendário.
-
-Cada Período Letivo materializa uma vigência efetiva concreta.
+Cada Período Letivo possui datas efetivas próprias:
 
 ```text
-Configuração da Empresa:
-semestre padrão ≈ 5 meses
-
-Período Letivo 2027.1:
+Período Letivo 2027.1
 início = 03/02/2027
 fim    = 02/07/2027
 ```
 
-A duração concreta é consequência da configuração efetivamente aplicada àquele Período.
+Essas datas são dados da ocorrência concreta.
+
+Podem existir políticas ou defaults compartilháveis candidatos a Parâmetros, por exemplo:
+
+- duração padrão de um semestre;
+- regra geral de composição do calendário;
+- defaults de início ou encerramento, quando houver requisito real.
+
+A política não substitui a vigência concreta.
 
 Período Letivo não significa manhã, tarde ou noite.
 
@@ -188,7 +194,7 @@ Período Letivo não significa manhã, tarde ou noite.
 
 ## 8. Turno
 
-### DEC-FT-005 — Turno materializa uma configuração temporal da Empresa
+### DEC-FT-005 — Turno é referência organizacional temporal
 
 Turno representa uma organização recorrente de parte da jornada escolar.
 
@@ -199,37 +205,21 @@ Exemplos:
 - noite;
 - integral.
 
-A Empresa define os horários e regras temporais associados ao Turno.
+Pode ser referenciado por Turmas e organizar Blocos de Aula.
 
-Esses valores podem, quando necessário, divergir por Site ou outro escopo permitido.
+Horários concretos de um Turno fazem parte de sua organização temporal. Defaults ou políticas gerais de horário podem ser candidatos a Parâmetros quando houver necessidade compartilhável.
 
-Turno possui identidade porque pode ser referenciado por Turmas e Blocos de Aula.
+A modelagem não assume que todos os Sites obrigatoriamente utilizem os mesmos horários para um Turno com o mesmo nome.
 
 ---
 
 ## 9. Bloco de Aula
 
-### DEC-FT-006 — Bloco é uma referência concreta derivada da configuração temporal
+### DEC-FT-006 — Bloco é referência concreta e alocável
 
-Bloco de Aula representa uma unidade identificável e alocável de tempo.
+Bloco de Aula representa uma unidade identificável de tempo em que uma aula pode ser alocada.
 
-A Empresa define a duração e organização de seus Blocos por meio de Parâmetros.
-
-Exemplo:
-
-```text
-Parâmetro:
-duração padrão da aula = 50 min
-
-Blocos concretos:
-Bloco 1 = 07:00–07:50
-Bloco 2 = 07:50–08:40
-Bloco 3 = 09:00–09:50
-```
-
-Uma Empresa pode utilizar durações distintas quando necessário.
-
-O Bloco continua possuindo:
+Possui:
 
 - identidade;
 - horário concreto de início;
@@ -237,7 +227,22 @@ O Bloco continua possuindo:
 - posição ou ordem dentro do Turno;
 - contexto suficiente para ser referenciado por Disponibilidade e Gestão de Horários.
 
-A duração concreta é consequência dos valores definidos pela Empresa e aplicados ao Bloco.
+Exemplo:
+
+```text
+Bloco 1 = 07:00–07:50
+Bloco 2 = 07:50–08:40
+```
+
+A duração concreta decorre dos horários do próprio Bloco.
+
+Uma política como:
+
+```text
+duração padrão de aula = 50 min
+```
+
+pode ser candidata a Parâmetros e orientar a construção/validação da organização temporal, mas não substitui os Blocos concretos.
 
 ### Invariantes
 
@@ -250,11 +255,11 @@ A duração concreta é consequência dos valores definidos pela Empresa e aplic
 
 ## 10. Intervalo
 
-### DEC-FT-007 — Intervalo pertence à configuração temporal em Parâmetros
+### DEC-FT-007 — Intervalo não é automaticamente Parâmetro
 
-`Intervalo` representa uma faixa de tempo não alocável configurada pela Empresa.
+Intervalo representa uma faixa não alocável da organização temporal escolar.
 
-Exemplo:
+Exemplo concreto:
 
 ```text
 Bloco 2    07:50–08:40
@@ -262,42 +267,51 @@ Intervalo  08:40–09:00
 Bloco 3    09:00–09:50
 ```
 
-Diferentemente de Bloco de Aula, o Intervalo não precisa possuir identidade estrutural própria para ser referenciado por Disponibilidade ou Gestão de Horários.
+A faixa `08:40–09:00` é uma ocorrência concreta da organização temporal.
 
-Ele é uma regra/configuração da organização temporal que informa ao sistema que determinada faixa não pode receber alocações.
+Ela não deve ser classificada como Parâmetro apenas porque a Empresa pode configurá-la.
 
-Pode variar por:
+Ao mesmo tempo, a modelagem ainda não exige que Intervalo tenha identidade estrutural independente. Ele pode permanecer como parte da organização temporal concreta de um Turno enquanto nenhum requisito exigir referência própria.
 
-- Empresa;
-- Site;
-- Turno;
-- outro escopo permitido pela configuração.
+Políticas/defaults gerais podem ser candidatos a Parâmetros, por exemplo:
+
+```text
+duração padrão do intervalo = 20 min
+```
 
 Portanto:
 
 ```text
-Bloco de Aula
-→ referência temporal alocável
+Intervalo concreto
+→ parte da organização temporal
 
-Intervalo
-→ configuração temporal não alocável em Parâmetros
+política/default de Intervalo
+→ candidata a Parâmetros
 ```
 
 ---
 
 ## 11. Interstício
 
-Interstício também é definido em Parâmetros, mas possui significado diferente de Intervalo.
+Interstício possui natureza diferente de Intervalo.
+
+Representa uma regra mínima de separação entre determinadas atividades.
+
+Quando institucional ou contratual, é candidato natural a Parâmetros:
+
+```text
+interstício mínimo = 20 min
+```
 
 ```text
 Intervalo
-→ faixa não alocável explicitamente configurada
+→ faixa não alocável concreta
 
 Interstício
-→ tempo mínimo livre exigido entre determinadas atividades
+→ regra mínima de separação
 ```
 
-Um Intervalo pode satisfazer um Interstício, mas não são equivalentes.
+Um Intervalo pode satisfazer um Interstício, mas os conceitos não são equivalentes.
 
 ---
 
@@ -315,7 +329,7 @@ Esses vínculos descrevem contexto da Turma, não uma aula já alocada.
 
 ## 13. Relação com Disponibilidade
 
-Disponibilidade consome principalmente os Blocos de Aula materializados:
+Disponibilidade consome principalmente Blocos de Aula concretos:
 
 ```text
 Professor
@@ -325,9 +339,9 @@ Disponibilidade
 Bloco de Aula
 ```
 
-Intervalos configurados não são oferecidos como Blocos disponíveis para declaração de disponibilidade ou alocação.
+Faixas não alocáveis da organização temporal não devem ser oferecidas como Blocos disponíveis.
 
-Quando necessário, Site também pode compor o contexto da disponibilidade.
+Quando necessário, Site também pode compor o contexto da disponibilidade. Essa necessidade permanece em aberto.
 
 ---
 
@@ -348,59 +362,43 @@ Ambiente
         +
 Deslocamento entre Sites
         +
-Parâmetros temporais
-          ├── Intervalos
-          ├── Interstícios
-          ├── durações
-          └── deslocamentos
+políticas aplicáveis de Parâmetros
         ↓
 Grade de Horários
 ```
 
-O módulo utiliza os valores definidos pela Empresa sem assumir ownership sobre a configuração temporal.
+O módulo não assume ownership dessas referências ou políticas.
 
 ---
 
-## 15. Escopo e divergência de configuração
+## 15. Pressão de requisitos sobre Parâmetros
 
-A modelagem admite que configurações temporais possam divergir.
+Algumas políticas escolares podem precisar de escopo contextual, por exemplo:
 
-Exemplos:
+- Empresa;
+- Site;
+- Turno;
+- Período Letivo.
 
-```text
-Empresa A
-  aula padrão = 50 min
-  intervalo = 08:40–09:00
-  interstício = 10 min
+Essa necessidade deve informar a futura F08, mas não define como o escopo será persistido ou resolvido.
 
-Empresa B
-  aula padrão = 45 min
-  intervalo = 09:15–09:30
-  interstício = 20 min
-```
-
-E, quando permitido:
+A solução futura deve preservar:
 
 ```text
-Empresa A
-  Site Centro
-    turno manhã = 07:00–12:00
-    intervalo = 08:40–09:00
-
-  Site Anexo
-    turno manhã = 07:30–12:30
-    intervalo = 09:00–09:20
+plataforma
+    ↑
+Escola
 ```
 
-A precedência entre configuração global e configuração específica será definida tecnicamente no FractawModules, preservando a semântica estabelecida neste repositório.
+Parâmetros não pode depender diretamente de código específico da Escola para cumprir esse requisito.
 
 ---
 
 ## 16. Questões em aberto
 
-### QFT-001 — Precedência temporal
+### QFT-001 — Escopo de Turno e Bloco
 
-Quando existir valor global e valor específico por Site/Turno, qual deve prevalecer?
+A mesma definição de Turno e seus Blocos pode ser compartilhada entre Sites ou cada Site precisa de organização temporal própria?
 
 ### QFT-002 — Recursos de Ambiente
 
@@ -418,26 +416,31 @@ A Disponibilidade do Professor precisa distinguir o Site em determinado Bloco?
 
 Como representar Turmas que operam em mais de um Turno?
 
-### QFT-006 — Vigência de mudança temporal
+### QFT-006 — Vigência de mudanças
 
-Quando a Empresa altera uma configuração temporal, a mudança afeta somente novos Períodos/Blocos ou também estruturas já existentes?
+Como alterações em políticas temporais ou referências concretas afetam processos ou resultados já iniciados?
 
-### QFT-007 — Escopo de Intervalos
+### QFT-007 — Intervalos concretos
 
-Intervalos podem ser definidos globalmente para a Empresa ou precisam sempre estar associados a um Turno e, eventualmente, a um Site?
+Intervalos precisam de identidade própria em algum caso real ou podem permanecer como parte da organização temporal de Turno?
+
+### QFT-008 — Escopo de políticas temporais
+
+Quais políticas realmente precisam variar por Site, Turno ou Período Letivo?
 
 ---
 
 ## 17. Decisões consolidadas
 
-- a Empresa define seus valores temporais por meio de Parâmetros;
-- Empresas podem operar com valores temporais diferentes;
-- configurações podem possuir escopo específico quando necessário;
 - Site e Ambiente permanecem referências estruturais;
-- a relação de Deslocamento entre Sites permanece estrutural, mas seu tempo é configurável;
-- Período Letivo permanece referência concreta, materializando uma configuração de vigência;
-- Turno permanece referência organizacional, materializando horários configurados;
-- Bloco de Aula permanece referência alocável, materializando duração e horários configurados;
-- Intervalo pertence a Parâmetros como faixa temporal não alocável;
-- Interstício mínimo pertence a Parâmetros como regra de separação;
-- Gestão de Horários consome as configurações e referências sem assumir ownership sobre elas.
+- Deslocamento entre Sites é relação estrutural direcional;
+- o tempo específico de cada relação de deslocamento é dado estrutural;
+- margem geral de deslocamento é candidata a Parâmetros;
+- Período Letivo permanece referência concreta com datas efetivas;
+- Turno permanece referência organizacional temporal;
+- Bloco de Aula permanece referência concreta e alocável;
+- duração padrão de aula é candidata a Parâmetros;
+- Intervalo concreto não é automaticamente Parâmetro;
+- Interstício institucional é candidato natural a Parâmetros;
+- configurabilidade não substitui classificação pela natureza do conceito;
+- Gestão de Horários consome referências e políticas sem assumir ownership.
