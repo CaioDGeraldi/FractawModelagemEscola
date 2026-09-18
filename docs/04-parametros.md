@@ -36,14 +36,15 @@ Não pertencem a Parâmetros apenas por serem configuráveis:
 - tentativas de geração;
 - exceções.
 
-## 4. Candidatos atuais
+## 4. Parâmetros já identificados
 
-A modelagem de Disponibilidade e Gestão de Horários já identificou candidatos como:
+A modelagem de Disponibilidade e Gestão de Horários já identificou como candidatos:
 
 - política de interpretação da escala de prioridade de ausência;
 - prioridade mínima considerada bloqueante;
 - limites institucionais de alocação;
-- máximo de aulas consecutivas, quando definido como política;
+- máximo de aulas consecutivas;
+- interstício mínimo entre atividades, quando exigido pela instituição;
 - margens ou tolerâncias gerais de deslocamento;
 - outras políticas compartilhadas que venham a ser confirmadas pelos requisitos.
 
@@ -73,17 +74,83 @@ A referência atual de modelagem considera:
 
 Essa política permanece sujeita à definição formal dos requisitos da Escola e à configuração permitida por Empresa.
 
-## 6. Limites
+## 6. Interstício
+
+### DEC-PAR-001 — Interstício mínimo é uma política
+
+Interstício representa o tempo mínimo livre que deve existir entre duas atividades quando uma regra institucional, contratual ou operacional exigir essa separação.
+
+Exemplo conceitual:
+
+```text
+interstício mínimo entre atividades = 20 minutos
+```
+
+Ele não deve ser confundido com um intervalo real já existente na grade de blocos.
+
+```text
+Intervalo estrutural
+→ 08:40–09:00 realmente existe na organização temporal
+
+Interstício mínimo
+→ regra que exige determinada separação entre atividades
+```
+
+A modelagem ainda deve definir em quais contextos o interstício se aplica, por exemplo:
+
+- entre aulas consecutivas;
+- entre turnos;
+- entre jornadas;
+- apenas em determinadas situações contratuais.
+
+## 7. Deslocamento e margem
+
+O tempo concreto de deslocamento entre dois Sites não é Parâmetro: pertence à relação estrutural de Deslocamento entre Sites.
+
+Parâmetros pode definir uma margem adicional de segurança.
+
+Exemplo:
+
+```text
+Deslocamento A → B = 35 min
+Margem institucional = 10 min
+Tempo considerado no planejamento = 45 min
+```
+
+Gestão de Horários aplica a política sem assumir ownership do dado estrutural.
+
+## 8. Duração padrão de aula
+
+A duração real de uma aula alocável é definida pelo Bloco de Aula, por seus horários de início e término.
+
+Se a Empresa desejar utilizar uma duração padrão para auxiliar a criação ou validação dos Blocos, esse valor pode ser representado como política/configuração.
+
+Portanto:
+
+```text
+Bloco 1 = 07:00–07:50
+→ duração real: 50 min
+
+Parâmetro opcional:
+duração padrão de aula = 50 min
+```
+
+O parâmetro padrão não substitui a identidade e os horários reais dos Blocos.
+
+## 9. Limites
 
 Parâmetros não deve:
 
 - manter Professor, Turma, Disciplina ou outras referências;
+- registrar Períodos Letivos concretos;
+- registrar Blocos de Aula concretos;
+- armazenar tempos concretos de deslocamento entre Sites;
 - registrar ausências individuais;
 - armazenar uma tentativa de geração;
 - armazenar a grade;
 - absorver dados operacionais apenas porque mais de um módulo os consulta.
 
-## 7. Questões em aberto
+## 10. Questões em aberto
 
 A modelagem ainda deve confirmar:
 
@@ -91,4 +158,5 @@ A modelagem ainda deve confirmar:
 - quais possuem valor padrão;
 - quais podem ser alteradas por Empresa;
 - quais exigem histórico ou versionamento;
-- em que momento uma política alterada passa a valer para processos já iniciados.
+- em que momento uma política alterada passa a valer para processos já iniciados;
+- em quais contextos o interstício mínimo se aplica.
