@@ -18,13 +18,10 @@ Curso ──────── Disciplina
   │                 │
   └── Turma ────────┘
           │
-          │ oferta disciplinas
           ▼
   Oferta de Disciplina
           │
-          │ pode exigir / receber docente
-          ▼
-       Professor
+          └── 0..* Professores atribuídos
 ```
 
 As relações possuem significado próprio e não devem ser reduzidas apenas por conveniência de implementação.
@@ -37,36 +34,16 @@ Uma Disciplina não pertence exclusivamente a um Curso.
 
 A mesma Disciplina pode participar de diferentes Cursos, inclusive com regras curriculares diferentes.
 
-Exemplo conceitual:
-
-```text
-Disciplina: Programação Web
-
-Curso A ── utiliza Programação Web
-Curso B ── utiliza Programação Web
-```
-
-Isso evita duplicar a identidade da Disciplina apenas porque ela aparece em mais de uma formação.
-
-### Relação curricular
+### Matriz Curricular
 
 A relação entre Curso e Disciplina representa a presença daquela Disciplina na organização curricular do Curso.
 
-Essa relação pode precisar registrar informações próprias, como:
+Pode registrar, conforme os requisitos:
 
 - carga horária prevista;
 - módulo, série ou etapa;
 - obrigatoriedade;
-- outras regras curriculares que venham a ser confirmadas.
-
-O nome definitivo dessa relação ainda pode ser refinado. `Matriz Curricular` é o termo conceitual inicial.
-
-```text
-Curso
-  │
-  └── Matriz Curricular
-          └── Disciplina
-```
+- outras regras curriculares.
 
 ## 4. Turma
 
@@ -74,21 +51,11 @@ Curso
 
 Turma não é sinônimo de Curso.
 
-Curso representa a formação ou organização acadêmica; Turma representa um grupo concreto de alunos dentro de determinado contexto letivo.
+Curso representa a formação ou organização acadêmica; Turma representa um grupo concreto dentro de determinado contexto letivo.
 
 Uma Turma deve estar vinculada a um Período Letivo.
 
 Quando o modelo acadêmico da instituição utilizar Curso, a Turma pode estar vinculada ao Curso correspondente.
-
-Conceitualmente:
-
-```text
-Curso
-  └── Turma
-        └── Período Letivo
-```
-
-A obrigatoriedade de Curso para toda Turma permanece dependente do modelo acadêmico da Empresa Escola. O domínio não deve impedir instituições que organizem Turmas sem o conceito de Curso.
 
 ## 5. Turma e Disciplina
 
@@ -98,46 +65,30 @@ A Matriz Curricular responde:
 
 > Quais Disciplinas fazem parte de um Curso?
 
-A relação Turma–Disciplina responde:
+A Oferta de Disciplina responde:
 
 > Quais Disciplinas esta Turma precisa receber neste contexto letivo?
 
-Por isso, Gestão de Horários não deve depender diretamente apenas da Matriz Curricular.
-
-É necessário representar a oferta concreta da Disciplina para a Turma.
-
 ### Oferta de Disciplina
 
-`Oferta de Disciplina` é o nome conceitual inicial para a relação entre Turma e Disciplina que precisa ser atendida no planejamento.
+`Oferta de Disciplina` representa a necessidade concreta de uma Disciplina para uma Turma.
 
-Pode conter, conforme os requisitos forem confirmados:
+Pode conter, conforme os requisitos:
 
 - Turma;
 - Disciplina;
 - carga horária a cumprir;
-- requisitos de ambiente;
+- requisitos de Ambiente;
+- Professores atribuídos;
 - outras condições necessárias à oferta.
 
-Exemplo:
+A Oferta existe antes da montagem da grade e constitui entrada para Gestão de Horários.
 
-```text
-Turma 3-DS
-  ├── Programação Web — 4 aulas/semana
-  ├── Banco de Dados — 3 aulas/semana
-  └── Matemática — 2 aulas/semana
-```
-
-A Oferta de Disciplina existe antes da montagem da grade e constitui uma entrada acadêmica para Gestão de Horários.
-
-Ela não representa uma aula já alocada em determinado dia e bloco.
+Ela não representa uma aula já alocada em determinado dia e Bloco.
 
 ## 6. Professor e Disciplina
 
 ### DEC-ACA-004 — Habilitação docente e atribuição docente são conceitos diferentes
-
-A relação entre Professor e Disciplina não deve possuir significado ambíguo.
-
-Devem ser distinguidas pelo menos duas ideias:
 
 ### Habilitação docente
 
@@ -147,52 +98,74 @@ Responde:
 
 É uma relação estrutural entre Professor e Disciplina.
 
-```text
-Professor
-   └── habilitado para
-         └── Disciplina
-```
-
-A habilitação não significa que o Professor foi escolhido para uma Turma específica.
+A habilitação não significa responsabilidade por uma Turma específica.
 
 ### Atribuição docente
 
 Responde:
 
-> Este Professor é o responsável por esta Oferta de Disciplina para esta Turma?
+> Quais Professores estão atribuídos a esta Oferta de Disciplina?
 
-É diferente de habilitação.
+Uma Oferta pode possuir nenhum, um ou vários Professores atribuídos antes do planejamento, dependendo do fluxo adotado.
 
 ```text
-Professor
-   └── atribuído a
-         └── Oferta de Disciplina
+Oferta de Disciplina
+├── Professor A
+└── Professor B
 ```
 
-Ainda deve ser definido pelos requisitos se a atribuição docente:
+A existência de mais de um Professor não significa necessariamente que todos participarão de todas as aulas da Oferta.
 
-- sempre existe antes da geração da grade;
-- pode ser escolhida durante o planejamento;
-- pode ser sugerida automaticamente e confirmada por uma pessoa autorizada;
-- ou admite mais de um desses fluxos.
+## 7. Co-docência
 
-## 7. Professor e Turma
+### DEC-ACA-005 — Uma aula pode possuir mais de um Professor
+
+Uma aula efetivamente alocada pode possuir um ou mais Professores simultaneamente.
+
+Isso permite representar co-docência sem tornar dois Professores obrigatórios para todas as aulas.
+
+Conceitualmente:
+
+```text
+Aula / Alocação
+├── Professor A
+└── Professor B   ← opcional
+```
+
+Para uma aula válida deve existir pelo menos um Professor responsável, salvo casos futuros explicitamente modelados de atividade sem docente.
+
+Quando houver co-docência:
+
+- todos os Professores participantes precisam estar disponíveis no mesmo Bloco;
+- todos ficam ocupados durante a mesma alocação;
+- restrições de deslocamento e interstício se aplicam individualmente a cada Professor;
+- a alocação continua pertencendo à mesma Oferta de Disciplina.
+
+A modelagem distingue, portanto:
+
+```text
+Professores atribuídos à Oferta
+≠ necessariamente
+Professores participantes de cada Aula
+```
+
+Isso permite que uma Oferta tenha dois Professores responsáveis, mas apenas determinadas aulas utilizem os dois simultaneamente.
+
+## 8. Professor e Turma
 
 Não deve existir uma relação direta genérica `Professor → Turma` sem significado específico.
 
-O relacionamento normalmente ocorre por meio da atividade acadêmica:
+O relacionamento ocorre pela atividade acadêmica:
 
 ```text
 Professor
    ↓
-Oferta de Disciplina
+Oferta de Disciplina / Aula
    ↓
 Turma
 ```
 
-Isso evita registrar que um Professor "pertence" a uma Turma sem explicar qual Disciplina ou responsabilidade origina a relação.
-
-## 8. Relação com Gestão de Horários
+## 9. Relação com Gestão de Horários
 
 Gestão de Horários consome o modelo acadêmico, mas não se torna proprietária dele.
 
@@ -204,23 +177,15 @@ Entradas conceituais relevantes incluem:
 - Professores habilitados ou previamente atribuídos;
 - Período Letivo;
 - Blocos de Aula;
-- ambientes e recursos;
+- Ambientes e recursos;
 - Disponibilidade;
 - políticas fornecidas por Parâmetros.
 
-O resultado da geração é operacional e pertence a Gestão de Horários.
+Gestão de Horários define quais Professores participam de cada alocação quando isso fizer parte do planejamento.
 
-```text
-Modelo acadêmico
-      │
-      ▼
-Gestão de Horários
-      │
-      ▼
-Grade / alocações / exceções
-```
+O resultado da geração é operacional e pertence ao módulo.
 
-## 9. Invariantes iniciais
+## 10. Invariantes iniciais
 
 ### INV-ACA-001
 
@@ -244,9 +209,17 @@ Uma alocação de horário não altera a identidade da Oferta de Disciplina que 
 
 ### INV-ACA-006
 
+Uma aula alocada deve possuir pelo menos um Professor responsável, quando se tratar de atividade docente.
+
+### INV-ACA-007
+
+Todos os Professores de uma aula em co-docência devem estar simultaneamente aptos àquela alocação segundo Disponibilidade, deslocamento e demais restrições aplicáveis.
+
+### INV-ACA-008
+
 A exclusão ou inativação de uma referência não deve tornar históricos acadêmicos ou grades publicadas semanticamente incompreensíveis.
 
-## 10. Cardinalidades conceituais iniciais
+## 11. Cardinalidades conceituais iniciais
 
 ```text
 Curso                0..* ↔ 0..* Disciplina
@@ -255,12 +228,13 @@ Período Letivo       1    ← 0..* Turma
 Turma                 1    ← 0..* Oferta de Disciplina
 Disciplina            1    ← 0..* Oferta de Disciplina
 Professor            0..* ↔ 0..* Disciplina (habilitação)
-Professor            0..* ↔ 0..* Oferta de Disciplina (atribuição, se aplicável)
+Professor            0..* ↔ 0..* Oferta de Disciplina (atribuição)
+Aula / Alocação      1..* ↔ 0..* Professor
 ```
 
-Essas cardinalidades são conceituais e podem ser refinadas quando regras institucionais mais específicas forem formalizadas.
+As cardinalidades podem ser refinadas quando regras institucionais mais específicas forem formalizadas.
 
-## 11. Questões em aberto
+## 12. Questões em aberto
 
 ### QA-ACA-001 — Matriz Curricular
 
@@ -272,11 +246,11 @@ A carga horária efetiva para planejamento pertence à Matriz Curricular, à Ofe
 
 ### QA-ACA-003 — Atribuição docente
 
-O Professor responsável por uma Oferta de Disciplina é definido obrigatoriamente antes da geração da grade ou pode fazer parte do processo de planejamento?
+Os Professores responsáveis por uma Oferta são definidos obrigatoriamente antes da geração ou podem fazer parte do processo de planejamento?
 
-### QA-ACA-004 — Múltiplos professores
+### QA-ACA-004 — Co-docência por aula
 
-Uma mesma Oferta de Disciplina pode possuir mais de um Professor responsável?
+Quando uma Oferta possui vários Professores atribuídos, como é determinado quais deles participam juntos de cada Aula?
 
 ### QA-ACA-005 — Turma sem Curso
 
