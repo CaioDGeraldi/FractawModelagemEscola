@@ -62,56 +62,61 @@ Pode estar relacionada a:
 
 - Curso, quando aplicável;
 - Site de referência;
+- Turno;
 - Ofertas de Disciplina;
 - alocações da Grade de Horários.
 
 ### REF-005 — Período Letivo
 
-Representa a vigência acadêmica utilizada para organizar atividades, Turmas, disponibilidade e planejamento.
+Representa a vigência acadêmica utilizada para organizar Turmas, disponibilidade, ofertas e planejamento.
 
 Pode corresponder, por exemplo, a semestre ou ano letivo conforme a instituição.
 
-Período Letivo não deve ser confundido com turno, período do dia ou Bloco de Aula.
+Período Letivo não deve ser confundido com Turno ou Bloco de Aula.
 
-### REF-006 — Site / Unidade Escolar
+### REF-006 — Site
 
 Representa uma unidade física da Empresa Escola.
 
-Pode possuir:
+`Site` é o termo estrutural adotado pela modelagem; “Unidade Escolar” pode ser utilizado como termo de apresentação.
 
-- Salas;
-- Laboratórios;
-- Turmas;
-- relações de deslocamento com outros Sites.
+Pode possuir Ambientes e relações de deslocamento com outros Sites.
 
-O termo definitivo entre `Site` e `Unidade Escolar` ainda pode ser refinado no glossário.
+### REF-007 — Ambiente
 
-### REF-007 — Sala
+Representa um espaço físico alocável dentro de um Site.
 
-Representa um ambiente físico em que atividades acadêmicas podem ocorrer.
+Exemplos:
 
-Pode possuir características relevantes para alocação.
+- sala comum;
+- laboratório de informática;
+- laboratório de química;
+- auditório;
+- quadra;
+- oficina.
 
-A relação entre Sala e Laboratório permanece em análise.
+Sala e Laboratório não são tratados como entidades estruturais paralelas. São formas de classificar ou caracterizar um Ambiente.
 
-### REF-008 — Laboratório
+A modelagem ainda deve detalhar como tipos, capacidades e recursos de Ambiente serão expressos conceitualmente.
 
-Representa um ambiente com recursos ou características específicas necessários a determinadas atividades.
+### REF-008 — Turno
 
-Ainda deve ser decidido se Laboratório é uma especialização de Sala ou uma referência independente.
+Representa uma organização recorrente de parte da jornada escolar, como manhã, tarde ou noite.
+
+Pode organizar Blocos de Aula e ser utilizado como referência por Turmas e regras de planejamento.
 
 ### REF-009 — Bloco de Aula
 
-Representa uma unidade estrutural de tempo disponível para alocação acadêmica.
+Representa uma faixa concreta e alocável de tempo.
 
-Pode possuir:
+Possui, conceitualmente:
 
 - horário de início;
 - horário de término;
-- posição dentro de um turno ou jornada;
+- ordem dentro de um Turno;
 - identidade utilizada por Disponibilidade e Gestão de Horários.
 
-Por possuir identidade própria e ser referenciado por processos diferentes, é tratado inicialmente como referência estrutural.
+Intervalos não alocáveis não precisam ser representados como Blocos de Aula.
 
 ## 4. Relações acadêmicas estruturais
 
@@ -121,20 +126,11 @@ O detalhamento principal destas relações está em `05-modelo-academico.md`.
 
 Representa quais Disciplinas fazem parte de um Curso e quais propriedades pertencem a essa relação curricular.
 
-Pode registrar, conforme os requisitos:
-
-- carga horária prevista;
-- etapa, módulo ou série;
-- obrigatoriedade;
-- outras regras curriculares.
-
 ### Oferta de Disciplina — Turma ↔ Disciplina
 
 Representa uma Disciplina que uma Turma precisa receber em determinado contexto letivo.
 
 A Oferta existe antes da montagem da grade e constitui entrada para Gestão de Horários.
-
-Não representa uma aula já alocada.
 
 ### Habilitação docente — Professor ↔ Disciplina
 
@@ -148,25 +144,29 @@ Representa que um Professor é responsável por uma Oferta de Disciplina concret
 
 O momento em que a atribuição é definida ainda deve ser confirmado pelos requisitos de Gestão de Horários.
 
+## 5. Relações físicas estruturais
+
+O detalhamento principal está em `06-modelo-fisico-temporal.md`.
+
 ### Deslocamento entre Sites
 
-Uma relação específica entre Site de origem e Site de destino, com tempo de deslocamento aplicável, é candidata a dado estrutural.
+Representa o tempo concreto de deslocamento de um Site de origem para um Site de destino.
 
-Exemplo:
+É uma relação estrutural direcional:
 
 ```text
-Site A → Site B = 35 minutos
+Site A → Site B
 ```
 
-Uma margem geral adicional de deslocamento, por outro lado, representa política e é candidata a Parâmetro.
+O tempo contrário pode ser diferente.
 
-## 5. Conceitos que não são referências estruturais
+Uma margem geral adicional de deslocamento é política e pertence a Parâmetros.
+
+## 6. Conceitos que não são referências estruturais
 
 ### Diretor
 
 Diretor é uma função/ator escolar e não uma referência estrutural necessária ao planejamento.
-
-Caso futuros requisitos exijam identidade de domínio própria para direção escolar, essa classificação poderá ser revista.
 
 ### Papel empresarial
 
@@ -184,13 +184,17 @@ Representam capacidades de acesso e não referências acadêmicas.
 
 São estados ou resultados pertencentes a Gestão de Horários.
 
-## 6. Relação com o Catálogo de Produtos
+### Margens e limites institucionais
+
+São políticas/configurações e pertencem conceitualmente a Parâmetros quando aplicáveis.
+
+## 7. Relação com o Catálogo de Produtos
 
 O Catálogo de Produtos da plataforma FractawModules não é proprietário das referências escolares.
 
-Conceitos como Professor, Turma e Disciplina pertencem ao domínio Escola.
+As referências deste documento pertencem ao domínio Escola.
 
-## 7. Relação com módulos
+## 8. Relação com módulos
 
 Módulos podem consumir referências sem assumir ownership sobre elas.
 
@@ -205,9 +209,15 @@ Oferta de Disciplina
 Bloco de Aula
 ├── Disponibilidade
 └── Gestão de Horários
+
+Ambiente
+└── Gestão de Horários
+
+Site / Deslocamento
+└── Gestão de Horários
 ```
 
-## 8. Invariantes iniciais
+## 9. Invariantes iniciais
 
 ### INV-REF-001
 
@@ -233,35 +243,46 @@ Habilitação docente e Atribuição docente possuem significados distintos.
 
 Matriz Curricular e Oferta de Disciplina possuem significados distintos.
 
-## 9. Questões em aberto
+### INV-REF-007
 
-### QR-001 — Sala e Laboratório
+Ambiente pertence a um Site e não pode ser alocado como se pertencesse a outro Site.
 
-Laboratório é uma especialização de Sala ou conceito independente?
+### INV-REF-008
 
-### QR-002 — Bloco de Aula
+Deslocamento entre Sites não é presumido como zero quando não houver relação conhecida.
 
-Blocos são definidos globalmente para a Empresa, por Site, por turno ou por outro contexto?
+### INV-REF-009
 
-### QR-003 — Atribuição docente
+Disponibilidade e Gestão de Horários devem referenciar a mesma identidade de Bloco de Aula quando representarem a mesma faixa alocável.
+
+## 10. Questões em aberto
+
+### QR-001 — Atribuição docente
 
 O Professor responsável por uma Oferta de Disciplina deve estar definido antes da geração da grade ou pode ser decidido durante o planejamento?
 
-### QR-004 — Deslocamento
-
-A relação de deslocamento é direcional e pode possuir tempos diferentes entre A → B e B → A?
-
-### QR-005 — Matriz Curricular
+### QR-002 — Matriz Curricular
 
 Como vigência e versionamento da Matriz Curricular devem ser representados conceitualmente?
 
-## 10. Próximas definições
+### QR-003 — Escopo temporal
+
+A mesma definição de Turno e Blocos pode ser compartilhada entre Sites ou cada Site precisa de sua própria organização temporal?
+
+### QR-004 — Recursos de Ambiente
+
+Como representar requisitos de recursos e capacidades sem criar tipos excessivamente rígidos?
+
+### QR-005 — Turma integral
+
+Como uma Turma que opera em mais de um Turno deve ser representada?
+
+## 11. Próximas definições
 
 A modelagem deverá aprofundar:
 
-- Sala, Laboratório e recursos de ambiente;
-- Bloco de Aula e organização temporal;
-- Sites e deslocamento;
-- regras de vigência acadêmica;
+- recursos e capacidades de Ambiente;
+- escopo de Turnos e Blocos entre Sites;
 - atribuição docente;
-- cardinalidades e ciclo de vida das relações acadêmicas.
+- vigência de Matriz Curricular;
+- regras específicas consumidas por Disponibilidade e Gestão de Horários.
