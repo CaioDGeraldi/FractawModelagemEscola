@@ -27,6 +27,7 @@ A modelagem do Tipo de Empresa Escola é organizada em quatro áreas:
 ```text
 Escola
 ├── referências estruturais
+├── modelo acadêmico
 ├── parâmetros aplicáveis
 └── módulos
     ├── Disponibilidade
@@ -45,6 +46,7 @@ docs/
 ├── 02-atores-e-partes-interessadas.md
 ├── 03-referencias-estruturais.md
 ├── 04-parametros.md
+├── 05-modelo-academico.md
 │
 └── modulos/
     ├── disponibilidade/
@@ -75,5 +77,11 @@ Os primeiros módulos funcionais em modelagem são:
 
 - **Disponibilidade**;
 - **Gestão de Horários**.
+
+A base acadêmica já distingue:
+
+- Curso e Disciplina;
+- Matriz Curricular e Oferta de Disciplina;
+- Habilitação docente e Atribuição docente.
 
 A geração automática da grade é uma responsabilidade de Gestão de Horários, não o nome do módulo como um todo.
